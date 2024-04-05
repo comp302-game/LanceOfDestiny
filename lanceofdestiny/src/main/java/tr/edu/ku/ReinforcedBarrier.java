@@ -16,7 +16,7 @@ public class ReinforcedBarrier extends Barrier {
 
         try {
             // Load the image
-            image = ImageIO.read(new File("C:/Users/90532/Desktop/lance/lance/lanceofdestiny/Assets/200Firm.png"));
+            image = ImageIO.read(getClass().getResourceAsStream("/Assets/<png ismi>.png"));
         } catch (IOException e) {
             // Handle the IOException (e.g., print an error message)
             e.printStackTrace();
