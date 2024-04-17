@@ -1,3 +1,5 @@
+package tr.edu.ku;
+
 import javax.swing.*;
 
 public class LanceOfDestiny extends JFrame {

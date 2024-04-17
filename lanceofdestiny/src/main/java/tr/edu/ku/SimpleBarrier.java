@@ -2,7 +2,6 @@ package tr.edu.ku;
 
 import java.io.IOException; // Import IOException for handling the exception
 import javax.imageio.ImageIO;
-import java.io.File;
 import java.awt.image.BufferedImage;
 
 public class SimpleBarrier extends Barrier {
@@ -14,7 +13,7 @@ public class SimpleBarrier extends Barrier {
 
         try {
             // Load the image
-            image = ImageIO.read(getClass().getResourceAsStream("/Assets/<png ismi>.png"));
+            image = ImageIO.read(getClass().getResourceAsStream("/Assets/200Bluegem.png"));
         } catch (IOException e) {
             // Handle the IOException (e.g., print an error message)
             e.printStackTrace();

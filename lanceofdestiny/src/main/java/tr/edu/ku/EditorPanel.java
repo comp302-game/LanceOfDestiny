@@ -31,7 +31,7 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
 
         try {
             // Load the image
-            background = ImageIO.read(new File(getClass().getResourceAsStream("/Assets/<png ismi>.png");
+            background = ImageIO.read(getClass().getResourceAsStream("/Assets/200Background.png"));
         } catch (IOException e) {
             // Handle the IOException (e.g., print an error message)
             e.printStackTrace();
