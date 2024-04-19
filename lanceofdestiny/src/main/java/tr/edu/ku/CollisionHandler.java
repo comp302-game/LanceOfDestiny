@@ -1,6 +1,8 @@
 package tr.edu.ku;
 
 import java.util.ArrayList;
+import java.awt.*;
+import java.util.Iterator;
 
 public class CollisionHandler {
 
@@ -8,34 +10,122 @@ public class CollisionHandler {
     private MagicalStaff paddle;
     private ArrayList<SimpleBarrier> simpleBarriers;
 	private ArrayList<ReinforcedBarrier> reinforcedBarriers;
-    private MovementHandler movement = new MovementHandler();
+    private ArrayList<ExplosiveBarrier> explosiveBarriers;
+    private MovementHandler movement = new MovementHandler(this);
 
-    public CollisionHandler(FireBall fireball, MagicalStaff staff, ArrayList<ReinforcedBarrier>  rbList, ArrayList<SimpleBarrier> sbList){
+    private ReinforcedBarrier incident_rbarrier; //For safe collision with reinforced barrier
+
+    public CollisionHandler(FireBall fireball, MagicalStaff staff, ArrayList<ReinforcedBarrier>  rbList, ArrayList<SimpleBarrier> sbList, ArrayList<ExplosiveBarrier> ebList){
         this.ball = fireball;
         this.paddle = staff;
         this.reinforcedBarriers = rbList;
         this.simpleBarriers = sbList;
+        this.explosiveBarriers = ebList;
     }
     
-    public void checkAnyCollision() {
+    public boolean checkAnyCollision() {
+
+        ResolveIncident();
+        ResolveStaffCollision();
+        boolean inc_score = false; //increment score signal if barrier is destroyed.
+
         // Check collision between ball and paddle
-        if (paddle.getPolygon().intersects(ball.getBounds())) {
+        if (paddle.getPolygon().intersects(ball.getBounds()) && paddle.isCollideable()) {
             movement.reflect(paddle, ball);
+            paddle.setCollideable(false);
         }
         
         // Check collision with simple barriers
-        for (SimpleBarrier barrier : simpleBarriers) {
-            if (barrier.isVisible() && barrier != null && ball.intersects(barrier.getBounds())) {           	
-            	movement.reflect(barrier, ball);
+        Iterator<SimpleBarrier> simpleBarrierIterator = simpleBarriers.iterator();
+        while (simpleBarrierIterator.hasNext()) {
+            SimpleBarrier barrier = simpleBarrierIterator.next();
+            if (barrier.isVisible() && barrier != null && ball.intersects(barrier.getBounds()) && barrier.getCollideable()) {  
+                simpleBarrierIterator.remove(); // remove the barrier using Iterator
+                movement.reflect(barrier, ball);
+                inc_score = true;
             }
         }
-        
+
         // Check collision with reinforced barriers
-        for (ReinforcedBarrier barrier : reinforcedBarriers) {
-            if (barrier.isVisible() && barrier != null && ball.intersects(barrier.getBounds())) {            	
-                movement.reflect(barrier, ball);       
+        Iterator<ReinforcedBarrier> reinforcedBarrierIterator = reinforcedBarriers.iterator();
+        while (reinforcedBarrierIterator.hasNext()) {
+            ReinforcedBarrier barrier = reinforcedBarrierIterator.next();
+            if (barrier.isVisible() && barrier != null && ball.intersects(barrier.getBounds()) && barrier.getCollideable()) {      	
+                movement.reflect(barrier, ball);
+                barrier.hit();
+                
+                if (barrier.getHitsTaken() >= 3) {
+                    reinforcedBarrierIterator.remove(); // remove the barrier using Iterator
+                    inc_score = true;
+                }
+
+                //For safe collision check
+                barrier.setCollideable(false);
+                incident_rbarrier = barrier;
             }
+        }
+
+        // Check collision with explosive barriers
+        Iterator<ExplosiveBarrier> explosiveBarrierIterator = explosiveBarriers.iterator();
+        while (explosiveBarrierIterator.hasNext()) {
+            ExplosiveBarrier barrier = explosiveBarrierIterator.next();
+            if (barrier.isVisible() && barrier != null && ball.intersects(barrier.getBounds()) && !barrier.isExploded() && barrier.getCollideable()) {            	
+                movement.reflect(barrier, ball);
+                barrier.explode();
+                inc_score = true;
+            }
+
+            if(barrier.isExploded()) {
+                if(barrier.getY() >= 900) {
+                    explosiveBarrierIterator.remove(); // remove the barrier using Iterator
+                }
+            }
+        }
+
+        return inc_score;
+    }
+
+
+
+    public int checkStaffCollisions() {
+        int type = 0;  //1 for explosive pieces, 2 for spell catch
+
+        // Check collision with explosive falling pieces.
+        for (ExplosiveBarrier barrier : explosiveBarriers) {
+            for(Rectangle piece : barrier.getHitboxes()) {
+                if(paddle.getPolygon().intersects(piece) && barrier.isVisible()) {
+                    barrier.setVisible(false);
+                    type = 1; 
+                }
+            }
+        }
+
+        //Check for spell catch
+        return type;
+
+    }
+
+    
+    private void ResolveIncident() {
+        if(incident_rbarrier != null && ball.intersects(incident_rbarrier.getBounds()) == false){
+            incident_rbarrier.setCollideable(true);
+            incident_rbarrier = null;
         }
     }
+
+
+    private void ResolveStaffCollision() {
+        Rectangle bounds = new Rectangle((int) ball.getX()-3, (int) ball.getY()-3, 22, 22);
+        if(paddle.getPolygon().intersects(bounds) == false) {
+            paddle.setCollideable(true);
+        }
+    }
+
+
+
+    public void checkBarrierCollisions() {
+        //TO BE IMPLEMENTED
+    }
+
 
 }
