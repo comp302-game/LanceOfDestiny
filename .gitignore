@@ -1,2 +1,5 @@
 # DS_Store ignore
 .DS_Store
+# Compiled class file
+*.class
+
