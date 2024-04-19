@@ -6,8 +6,6 @@ import java.awt.image.BufferedImage;
 
 public class SimpleBarrier extends Barrier {
 
-    private BufferedImage image;
-
     public SimpleBarrier(int x, int y, int width, int height) {
         super(x, y, width, height);
 
@@ -19,9 +17,4 @@ public class SimpleBarrier extends Barrier {
             e.printStackTrace();
         }
     }
-
-    public BufferedImage getImage() {
-		return image;
-	}
-    
 }

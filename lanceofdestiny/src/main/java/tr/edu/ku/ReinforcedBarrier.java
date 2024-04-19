@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 public class ReinforcedBarrier extends Barrier {
     private int hitsTaken;
     private static final int MAX_HITS = 3;
-    private BufferedImage image;
 
     public ReinforcedBarrier(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -25,13 +24,10 @@ public class ReinforcedBarrier extends Barrier {
 
     public void hit() {
         hitsTaken++;
-        if (hitsTaken >= MAX_HITS) {
-            visible = false;
-        }
     }
 
 
-    public BufferedImage getImage() {
-		return image;
-	}
+    public int getHitsTaken() {
+        return hitsTaken;
+    }
 }

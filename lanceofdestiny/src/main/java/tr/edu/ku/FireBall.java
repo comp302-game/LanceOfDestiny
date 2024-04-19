@@ -5,13 +5,13 @@ import java.io.IOException; // Import IOException for handling the exception
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
-public class FireBall {
+public class FireBall implements Cloneable {
     private static final int SIZE = 16;
-    private static final int SPEED_X = 3;
-    private static final int SPEED_Y = -3;
+    private static final int SPEED_X = 0;
+    private static final int SPEED_Y = -2; //Start with vertical speed
 
-    private int x = GamePanel.WIDTH / 2 - SIZE / 2;
-    private int y = GamePanel.HEIGHT / 2 - SIZE / 2;
+    private double x = GamePanel.WIDTH / 2 - SIZE / 2;
+    private double y = 800;
     private double speedX = SPEED_X;
 	private double speedY = SPEED_Y;
 
@@ -50,27 +50,27 @@ public class FireBall {
 	}
 
     public boolean intersects(Rectangle rect) {
-        return new Rectangle(x, y, SIZE, SIZE).intersects(rect);
+        return new Rectangle((int) x, (int) y, SIZE, SIZE).intersects(rect);
     }
 
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
-	public void setX(int x) {
+	public void setX(Double x) {
 		this.x = x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(Double y) {
 		this.y = y;
 	}
 
 	public Rectangle getBounds() {
-		return new Rectangle(x, y, SIZE, SIZE);
+		return new Rectangle((int) x, (int) y, SIZE, SIZE);
 	}
 
 	public boolean isVisible() {
@@ -84,5 +84,22 @@ public class FireBall {
 	public BufferedImage getImage() {
 		return image;
 	}
+
+	public Rectangle getRectangle() {
+		return new Rectangle((int) x, (int) y, SIZE, SIZE);
+	}
+
+	public void reset() {
+		x = GamePanel.WIDTH / 2 - SIZE / 2;
+      	y = 700;
+        speedX = SPEED_X;
+	    speedY = SPEED_Y;
+	}
+
+
+	@Override
+	 public Object clone() throws CloneNotSupportedException {
+	 return super.clone();
+	 }
 
 }
