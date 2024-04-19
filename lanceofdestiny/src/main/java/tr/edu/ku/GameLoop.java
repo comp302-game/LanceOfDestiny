@@ -2,18 +2,21 @@ package tr.edu.ku;
 
 public class GameLoop implements Runnable {
 
+    private EditorPanel editingPanel;
     private GamePanel gamePanel;
 
-    private boolean running;
-    private final double updateRate = 1.0d/60.0d;
-    private final double frameTime = 1.0d/60.0d;
 
+    private int gameMode; //1 for Running, 0 for Editing 
+
+    private boolean running;
+    private final double updateRate = 1.0d/120.0d;
     private long nextStatTime;
     private int fps, ups;
 
 
-    public GameLoop(GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
+    public GameLoop(EditorPanel editingPanel) { //Constructor for editing mode loop
+        this.editingPanel = editingPanel;
+        this.gameMode = 0;
     }
 
 
@@ -33,29 +36,19 @@ public class GameLoop implements Runnable {
 
             while(accumulator > updateRate) {
                 update();
+                render();
                 accumulator -= updateRate;
             }
 
-            render();
             printStats();
-
-             // Delay to limit FPS
-            long sleepTime = (long) ((frameTime - lastRenderTimeInSeconds) * 1000);
-            if (sleepTime > 0) {
-                try {
-                    Thread.sleep(sleepTime);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
         }
     }
 
 
+    //Print UPS & FPS of the game.
     private void printStats() {
         if(System.currentTimeMillis() > nextStatTime) {
-            System.out.println(String.format("FPS: %d, UPS: %d", fps, ups));
+            System.out.println(String.format("FPS: %d, UPS: %d in mode "+gameMode, fps, ups));
             fps = 0;
             ups = 0;
             nextStatTime = System.currentTimeMillis() + 1000;
@@ -63,16 +56,36 @@ public class GameLoop implements Runnable {
     }
 
 
+    //Update Game State
     private void update() {
-        gamePanel.updateGameState();
+        if(gameMode == 1){
+            gamePanel.updateGameState();
+        }
+        else if(gameMode == 0) {
+            editingPanel.updateEditingState();
+        }
         ups++;
     }
 
 
+    //Repaint the display elements
     private void render() {
-        gamePanel.repaint();
+        if(gameMode == 1){
+            gamePanel.repaint();
+        }
+        else if(gameMode == 0) {
+            editingPanel.repaint();
+        }
         fps++;
     }
 
+
+    public void setRunningPanel(GamePanel runningPanel) {
+        gamePanel = runningPanel;
+    }
+    
+    public void setMode(int mode) {
+        gameMode = mode;
+    }
     
 }
