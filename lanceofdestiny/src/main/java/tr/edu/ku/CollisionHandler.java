@@ -54,7 +54,7 @@ public class CollisionHandler {
                 movement.reflect(barrier, ball);
                 barrier.hit();
                 
-                if (barrier.getHitsTaken() >= 3) {
+                if (barrier.getHitsTaken() >= barrier.getMaxHits()) {
                     reinforcedBarrierIterator.remove(); // remove the barrier using Iterator
                     inc_score = true;
                 }
@@ -84,7 +84,6 @@ public class CollisionHandler {
 
         return inc_score;
     }
-
 
 
     public int checkStaffCollisions() {
@@ -123,8 +122,34 @@ public class CollisionHandler {
 
 
 
-    public void checkBarrierCollisions() {
+    public void checkBarrierCollisions(Barrier barrier) {
         //TO BE IMPLEMENTED
+        // Check collision with simple barriers
+        Iterator<SimpleBarrier> simpleBarrierIterator = simpleBarriers.iterator();
+        while (simpleBarrierIterator.hasNext()) {
+            SimpleBarrier sbarrier = simpleBarrierIterator.next();
+            if (sbarrier.isVisible() && sbarrier != null && sbarrier.intersects(barrier.getBounds()) && sbarrier.getCollideable()) {  
+                movement.reflect(barrier, sbarrier);
+            }
+        }
+
+        // Check collision with reinforced barriers
+        Iterator<ReinforcedBarrier> reinforcedBarrierIterator = reinforcedBarriers.iterator();
+        while (reinforcedBarrierIterator.hasNext()) {
+            ReinforcedBarrier rbarrier = reinforcedBarrierIterator.next();
+            if (rbarrier.isVisible() && rbarrier != null && rbarrier.intersects(barrier.getBounds()) && rbarrier.getCollideable()) {      	
+                movement.reflect(barrier, rbarrier);
+            }
+        }
+
+        // Check collision with explosive barriers
+        Iterator<ExplosiveBarrier> explosiveBarrierIterator = explosiveBarriers.iterator();
+        while (explosiveBarrierIterator.hasNext()) {
+            ExplosiveBarrier ebarrier = explosiveBarrierIterator.next();
+            if (ebarrier.isVisible() && ebarrier != null && ebarrier.intersects(barrier.getBounds()) && !ebarrier.isExploded() && ebarrier.getCollideable()) {            	
+                movement.reflect(barrier, ebarrier);
+            }
+        }
     }
 
 
