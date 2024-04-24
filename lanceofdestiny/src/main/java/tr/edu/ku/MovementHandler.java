@@ -28,19 +28,15 @@ public class MovementHandler {
    	
     		double slope = dy/dx;
 
-			//calculate boundary slope
-			double dx2 = barrier.getWidth()/2 + ball.getSize()/2;
-			double dy2 = barrier.getHeight()/2 + ball.getSize()/2;
-    		double cornerSlope = Math.abs(dy2/dx2);
 			
         	// Determine collision side based on ball's movement direction
-        	if (slope > cornerSlope) {
+        	if (slope > 0.72) {
         	    // Collision from top and bottom
         	    ball.setSpeedY(ball.getSpeedY() * -1); // Reverse vertical direction
 				
         	} 
         
-        	else if (slope < cornerSlope) {
+        	else if (slope < 0.72) {
         	    // Collision from the sides
         	    ball.setSpeedX(ball.getSpeedX() * -1); // Reverse horizontal direction
         	} 
@@ -69,19 +65,14 @@ public class MovementHandler {
     		}
    	
     		double slope = dy/dx;
-
-			//calculate boundary slope
-			double dx2 = barrier.getWidth()/2 + ball.getSize()/2;
-			double dy2 = barrier.getHeight()/2 + ball.getSize()/2;
-    		double cornerSlope = Math.abs(dy2/dx2);
     	
         	// Determine collision side based on ball's movement direction
-        	if (slope > cornerSlope) {
+        	if (slope > 0.72) {
         		// Collision from top and bottom
         		ball.setSpeedY(ball.getSpeedY() * -1); // Reverse vertical direction
         	} 
         
-        	else if (slope < cornerSlope) {
+        	else if (slope < 0.72) {
         		// Collision from the sides
        			ball.setSpeedX(ball.getSpeedX() * -1); // Reverse horizontal direction
         	} 
@@ -135,20 +126,15 @@ public class MovementHandler {
     		}
    	
     		double slope = dy/dx;
-
-			//calculate boundary slope
-			double dx2 = barrier.getWidth()/2 + ball.getSize()/2;
-			double dy2 = barrier.getHeight()/2 + ball.getSize()/2;
-    		double cornerSlope = Math.abs(dy2/dx2);
     	
         	// Determine collision side based on ball's movement direction
-        	if (slope > cornerSlope) {
+        	if (slope > 0.72) {
         	    // Collision from top and bottom
         	    ball.setSpeedY(ball.getSpeedY() * -1); // Reverse vertical direction
             
         	} 
         
-        	else if (slope < cornerSlope) {
+        	else if (slope < 0.72) {
         	// Collision from the sides
            	 	ball.setSpeedX(ball.getSpeedX() * -1); // Reverse horizontal direction
         	} 
@@ -178,19 +164,15 @@ public class MovementHandler {
    	
     		double slope = dy/dx;
 
-			//calculate boundary slope
-			double dx2 = barrier.getWidth()/2 + ball.getSize()/2;
-			double dy2 = barrier.getHeight()/2 + ball.getSize()/2;
-    		double cornerSlope = Math.abs(dy2/dx2);
     	
         	// Determine collision side based on ball's movement direction
-        	if (slope > cornerSlope) {
+        	if (slope > 0.72) {
         	    // Collision from top and bottom
         	    ball.setSpeedY(ball.getSpeedY() * -1); // Reverse vertical direction
             
         	} 
         
-        	else if (slope < cornerSlope) {
+        	else if (slope < 0.72) {
         	    // Collision from the sides
         	    ball.setSpeedX(ball.getSpeedX() * -1); // Reverse horizontal direction
         	} 
@@ -228,7 +210,6 @@ public class MovementHandler {
 	}
 
 
-
 	public void reflect(ExplosiveBarrier barrier, FireBall ball) {
 		
 		double centerBallx= ball.getX() + (ball.getSize()/ 2);
@@ -244,20 +225,15 @@ public class MovementHandler {
     	}
    	
     	double slope = dy/dx;
-
-		//calculate boundary slope
-		double dx2 = barrier.getWidth()/2 + ball.getSize()/2;
-		double dy2 = barrier.getHeight()/2 + ball.getSize()/2;
-    	double cornerSlope = Math.abs(dy2/dx2);
     	
         // Determine collision side based on ball's movement direction
-        if (slope > cornerSlope) {
+        if (slope > 0.72) {
             // Collision from top and bottom
             ball.setSpeedY(ball.getSpeedY() * -1); // Reverse vertical direction
             
         } 
         
-        else if (slope < cornerSlope) {
+        else if (slope < 0.72) {
             // Collision from the sides
             ball.setSpeedX(ball.getSpeedX() * -1); // Reverse horizontal direction
         } 
@@ -270,8 +246,6 @@ public class MovementHandler {
 	}
 
 	
-
-
 	public void reflect(MagicalStaff staff, FireBall ball) {
 
 		double staffCenterX = staff.getX();
@@ -343,6 +317,11 @@ public class MovementHandler {
 	}
 	
 	
+	public void reflect(Barrier barrier1, Barrier barrier2) {
+		barrier1.setSpeed(barrier1.getSpeed() * -1);
+		barrier2.setSpeed(barrier1.getSpeed() * -1);
+	}
+
 
 
 	public void updateStaff(MagicalStaff staff) {
@@ -360,8 +339,6 @@ public class MovementHandler {
 	        }
 	}
 	
-	
-
 	
 	public int updateFireBall(FireBall ball) {
 
@@ -393,7 +370,6 @@ public class MovementHandler {
 	}
 
 
-
 	private void bounceFromWall(FireBall ball) {
 	
 		if (ball.getX() <= 0 || ball.getX() >= GamePanel.WIDTH - ball.getSize()) {
@@ -407,9 +383,6 @@ public class MovementHandler {
 	}
 
 	
-
-	
-	
 	public void updateBarriers(ArrayList<ReinforcedBarrier> reinforcedBarriers, ArrayList<SimpleBarrier> simpleBarriers, ArrayList<ExplosiveBarrier> explosiveBarriers) {
 
 		setBarrierMovement(reinforcedBarriers, simpleBarriers, explosiveBarriers);
@@ -421,6 +394,9 @@ public class MovementHandler {
 				if(sBarrier.get_dx() >= 32 || sBarrier.get_dx() <= -32) {
 					sBarrier.setSpeed(sBarrier.getSpeed()*-1);
 				}
+
+				collision.checkBarrierCollisions(sBarrier);
+
 			}
 		}
 
@@ -431,6 +407,8 @@ public class MovementHandler {
 				if(rBarrier.get_dx() >= 32 || rBarrier.get_dx() <= -32) {
 					rBarrier.setSpeed(rBarrier.getSpeed()*-1);
 				}
+
+				collision.checkBarrierCollisions(rBarrier);
 			}
 		}
 		
@@ -438,6 +416,19 @@ public class MovementHandler {
 			if(eBarrier.isExploded()){
 				eBarrier.setY((int) (eBarrier.getY() + eBarrier.getSpeedY()));
 			}
+			else if (eBarrier.isExploded() == false && eBarrier.isMoving()){
+				eBarrier.setAngle(eBarrier.getAngle() + eBarrier.getSpeed());
+				double angle = Math.toRadians(eBarrier.getAngle());
+
+				int barrierOriginX = eBarrier.getOriginX() + (int) (eBarrier.getRadius() * Math.cos(angle));
+				int barrierOriginY = eBarrier.getOriginY() + (int) -(eBarrier.getRadius() * Math.sin(angle));
+
+				eBarrier.setX(barrierOriginX-16); 
+				eBarrier.setY(barrierOriginY-10);
+
+				collision.checkBarrierCollisions(eBarrier);
+			}
+			
 		}
 
 	} 
@@ -447,7 +438,7 @@ public class MovementHandler {
 	private void setBarrierMovement(ArrayList<ReinforcedBarrier> reinforcedBarriers, ArrayList<SimpleBarrier> simpleBarriers, ArrayList<ExplosiveBarrier> explosiveBarriers) { //Start moving the barriers if the space allows
 
 		for(SimpleBarrier sBarrier : simpleBarriers) {
-			if(sBarrier.isDynamic() && sBarrier.isMoving == false){
+			if(sBarrier.isDynamic() && sBarrier.isMoving() == false){
 
 				boolean path_check = true;
 
@@ -476,7 +467,7 @@ public class MovementHandler {
 
 
 		for(ReinforcedBarrier rBarrier : reinforcedBarriers) {
-			if(rBarrier.isDynamic() && rBarrier.isMoving == false){
+			if(rBarrier.isDynamic() && rBarrier.isMoving() == false){
 				
 				boolean path_check = true;
 
@@ -504,10 +495,43 @@ public class MovementHandler {
 			}
 			
 		}
+
+
+		for(ExplosiveBarrier eBarrier : explosiveBarriers) {
+			if(eBarrier.isDynamic() && eBarrier.isMoving() == false){
+				
+				boolean path_check = true;
+
+				for(ReinforcedBarrier barrier : reinforcedBarriers) {
+					if(eBarrier.getPath().intersects(barrier.getBounds())){
+						path_check = false;
+					}
+				}
+
+				for(SimpleBarrier sbarrier : simpleBarriers) {
+					if(eBarrier.getPath().intersects(sbarrier.getBounds())){
+						path_check = false;
+					}
+				}
+
+				
+				for(ExplosiveBarrier ebarrier : explosiveBarriers) {
+					if(eBarrier != ebarrier && eBarrier.getPath().intersects(ebarrier.getBounds())){
+						path_check = false;
+					}
+				}
+
+				eBarrier.setIsMoving(path_check);
+
+				if(path_check) {
+					eBarrier.setOriginX((int) eBarrier.getX() + 16);
+					eBarrier.setOriginY((int) eBarrier.getY() + 10 - eBarrier.getRadius());
+				}
+			}
+		}
 	}
 
 
 
 
 }
-
