@@ -29,6 +29,19 @@ class Renderer {
                 animator.renderReinforcedBarrier(g, rbarrier);
             }
         }
+
+        // Draw explosive barriers
+        for (ExplosiveBarrier ebarrier : gamePanel.getExplosiveBarriers()) {
+            if (ebarrier.isVisible() && ebarrier.isExploded() == false) {
+                animator.renderExplosiveBarrier(g, ebarrier);
+            }
+
+            else if (ebarrier.isExploded()) {
+                animator.renderExplosiveFalling(g, ebarrier);
+            }
+
+
+        }
     }
 
 
@@ -39,11 +52,15 @@ class Renderer {
     public void renderEditing(Graphics2D g, EditingArea editingArea) {
         
         //PAINT THE LABELS THAT USER CAN CHOOSE FROM
-        SimpleBarrier newSBarrier = new SimpleBarrier(1540, 20, 32, 20); 
-        g.drawImage(newSBarrier.getImage(), newSBarrier.getX(), newSBarrier.getY(), newSBarrier.getWidth(), newSBarrier.getHeight(), null);
+        SimpleBarrier newSBarrier = new SimpleBarrier(1605, 20, 32, 20); 
+        g.drawImage(newSBarrier.getImage(), (int) newSBarrier.getX(), (int) newSBarrier.getY(), newSBarrier.getWidth(), newSBarrier.getHeight(), null);
 
-        ReinforcedBarrier newRBarrier = new ReinforcedBarrier(1540, 50, 32, 20); 
-        g.drawImage(newRBarrier.getImage(), newRBarrier.getX(), newRBarrier.getY(), newRBarrier.getWidth(), newRBarrier.getHeight(), null);
+        ReinforcedBarrier newRBarrier = new ReinforcedBarrier(1605, 70, 32, 20); 
+        g.drawImage(newRBarrier.getImage(), (int) newRBarrier.getX(), (int) newRBarrier.getY(), newRBarrier.getWidth(), newRBarrier.getHeight(), null);
+
+        ExplosiveBarrier newEBarrier = new ExplosiveBarrier(1605, 120, 32, 20); 
+        g.drawImage(newEBarrier.getImage(), (int) newEBarrier.getX(), (int) newEBarrier.getY(), newEBarrier.getWidth(), newEBarrier.getHeight(), null);
+
 
         
         // Draw simple barriers from editor
@@ -57,6 +74,13 @@ class Renderer {
         for (ReinforcedBarrier rbarrier : editingArea.getReinforcedBarriers()) {
             if (rbarrier.isVisible()) {
                 animator.renderReinforcedBarrier(g, rbarrier);
+            }
+        }
+
+        // Draw explosive barriers from editor
+        for (ExplosiveBarrier eBarrier : editingArea.getExplosiveBarriers()) {
+            if (eBarrier.isVisible()) {
+                animator.renderExplosiveBarrier(g, eBarrier);
             }
         }
 
