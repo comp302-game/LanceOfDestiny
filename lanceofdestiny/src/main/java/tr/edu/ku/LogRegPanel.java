@@ -1,86 +1,67 @@
 package tr.edu.ku;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 public class LogRegPanel extends JPanel {
-    private CardLayout cardLayout;
     
-    static final int WIDTH = 1670; //extend the panel for labels
-    static final int HEIGHT = 900;
+    static final int WIDTH = 800; //extend the panel for labels
+    static final int HEIGHT = 600;
     
-    private BufferedImage background;
+    private JButton login_Button;
+    private JButton register_Button;
 
-    private JButton login;
-    private JButton register;
-    
-    public LogRegPanel(JFrame loginFrame, DatabaseConnection databaseConnection) {
-    	 setPreferredSize(new Dimension(WIDTH, HEIGHT));
+
+    public LogRegPanel(LoginFrame loginFrame) {
+    	setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(5, 5, 5, 5);
          
-         try {
-             // Load the image
-             background = ImageIO.read(getClass().getResourceAsStream("/Assets/200Background.png"));
-         } catch (IOException e) {
-             // Handle the IOException (e.g., print an error message)
-             e.printStackTrace();
-         }
+        login_Button = new JButton("Log In");
+        register_Button = new JButton("Register");
          
-         setLayout(new GridBagLayout());
+        login_Button.setPreferredSize(new Dimension(150, 30));
+        login_Button.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 25));
          
-         GridBagConstraints gbc = new GridBagConstraints();
-         gbc.gridx = 0;
-         gbc.gridy = 0;
-         gbc.insets = new Insets(5, 5, 5, 5);
-         
-         login = new JButton("Log In");
-         register = new JButton("Register");
-         
-         login.setPreferredSize(new Dimension(150, 30));
-         login.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 25));
-         
-         register.setPreferredSize(new Dimension(150, 30));
-         register.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 25));
+        register_Button.setPreferredSize(new Dimension(150, 30));
+        register_Button.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 25));
 
        
-         add(login, gbc);
+        add(login_Button, gbc);
          
-         gbc.gridx++;
+        gbc.gridx++;
          
-         add(register, gbc);
+        add(register_Button, gbc);
          
-         login.addActionListener(new ActionListener() {
+        login_Button.addActionListener(new ActionListener() {
 
- 			@Override
- 			public void actionPerformed(ActionEvent e) {
- 				// TODO Auto-generated method stub	
- 					LoginPanel log = new LoginPanel(loginFrame, databaseConnection);
-					removeAll();
-					setLayout(new BorderLayout());
+ 		    @Override
+ 		    public void actionPerformed(ActionEvent e) {
+				removeAll();
+				setLayout(new BorderLayout());
 					
-					add(log);
-					revalidate();
+				add(loginFrame.getLoginPanel());
+				revalidate();
  					
  			}
  			
  		});
          
         
-         register.addActionListener(new ActionListener() {
+        register_Button.addActionListener(new ActionListener() {
 
-  			@Override
+  		    @Override
   			public void actionPerformed(ActionEvent e) {
-  				// TODO Auto-generated method stub	
-  					RegisterPanel reg = new RegisterPanel(loginFrame, databaseConnection);
-  					removeAll();
-  					setLayout(new BorderLayout());
+  				removeAll();
+  				setLayout(new BorderLayout());
   					
-  					add(reg);
-  					revalidate();
+  				add(loginFrame.getRegisterPanel());
+  				revalidate();
   			}
   			
   		});
@@ -91,18 +72,7 @@ public class LogRegPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         // Draw the background image at the top-left corner of the panel
-        g.drawImage(background, 0, 0, 1600, 900, null);
+        g.drawImage(Constants.background, 0, 0, 1600, 900, null);
     }
     
-    
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Login Panel");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        DatabaseConnection databaseConnection = new DatabaseConnection();
-        
-        LogRegPanel loginPanel = new LogRegPanel(frame, databaseConnection);
-        frame.add(loginPanel);
-        
-        frame.setVisible(true);
-    }
 }

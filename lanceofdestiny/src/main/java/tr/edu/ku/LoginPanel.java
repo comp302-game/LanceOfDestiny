@@ -1,33 +1,21 @@
 package tr.edu.ku;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 public class LoginPanel extends JPanel {
-    private CardLayout cardLayout;
     
-    static final int WIDTH = 1670; //extend the panel for labels
-    static final int HEIGHT = 900;
     
-    private BufferedImage background;
+    private	LoginRegisterHandler logregHandler = new LoginRegisterHandler();
+    static final int WIDTH = 600;
+    static final int HEIGHT = 800;
+
    
-    public LoginPanel(JFrame loginFrame, DatabaseConnection databaseConnection) {
-    	 setPreferredSize(new Dimension(WIDTH, HEIGHT));
-         
-         try {
-             // Load the image
-             background = ImageIO.read(getClass().getResourceAsStream("/Assets/200Background.png"));
-         } catch (IOException e) {
-             // Handle the IOException (e.g., print an error message)
-             e.printStackTrace();
-         }
-    	
-         setLayout(new GridBagLayout()); 
-         GridBagConstraints gridm = new GridBagConstraints();
+    public LoginPanel(LoginFrame loginFrame) {
+    	setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setLayout(new GridBagLayout()); 
+        GridBagConstraints gridm = new GridBagConstraints();
  		
  	
  		gridm.gridx = 0;
@@ -42,7 +30,6 @@ public class LoginPanel extends JPanel {
  		
  		JTextField u_name_input = new JTextField(20);
  		gridm.gridy ++;
- 		u_name_input.setForeground(Color.white);
  		add(u_name_input, gridm);
  		
  		//Password
@@ -51,10 +38,10 @@ public class LoginPanel extends JPanel {
  		password.setForeground(Color.white);
  		add(password, gridm);
  		
- 		JTextField password_input = new JTextField(20);
- 		gridm.gridy ++;
- 		password_input.setForeground(Color.white);
- 		add(password_input, gridm);
+ 		// Use JPasswordField for password input
+        JPasswordField password_input = new JPasswordField(20);
+        gridm.gridy++;
+        add(password_input, gridm);
  		
  		gridm.gridy ++;
  		
@@ -63,19 +50,25 @@ public class LoginPanel extends JPanel {
  		login.setPreferredSize(new Dimension(150, 30));
  		login.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 25));
         
-        
+
         add(login, gridm);
  		
         login.addActionListener(new ActionListener() {
 
-  			@Override
+  			@SuppressWarnings("deprecation")
+            @Override
   			public void actionPerformed(ActionEvent e) {
-  				// TODO Auto-generated method stub	
-  				LoginRegisterHandler logregHandler = new LoginRegisterHandler(databaseConnection);
+
   				int val = logregHandler.Login(u_name_input.getText(), password_input.getText());
-  				
+
   				if(val == 1) {
-  					// Success Scenario
+                    
+                    JOptionPane.showMessageDialog(loginFrame, "Login is succesful!");
+  				    int id = logregHandler.getPlayerID(u_name_input.getText(), password_input.getText());
+  					loginFrame.dispose();
+                    Player player = new Player(id, u_name_input.getText());
+                    new MainApplication(player);
+                      
   				}
   				else if (val == 0) {
   					JOptionPane.showMessageDialog(loginFrame, "The username is not correct.");
@@ -97,7 +90,7 @@ public class LoginPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         // Draw the background image at the top-left corner of the panel
-        g.drawImage(background, 0, 0, 1600, 900, null);
+        g.drawImage(Constants.background, 0, 0, 1600, 900, null);
     }   
 	
 }

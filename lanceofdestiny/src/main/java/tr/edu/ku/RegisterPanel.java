@@ -1,34 +1,21 @@
 package tr.edu.ku;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 public class RegisterPanel extends JPanel {
-    private CardLayout cardLayout;
     
-    static final int WIDTH = 1670; //extend the panel for labels
-    static final int HEIGHT = 900;
-    
-    private BufferedImage background;
+    static final int WIDTH = 600; //extend the panel for labels
+    static final int HEIGHT = 800;
+  	private LoginRegisterHandler logregHandler = new LoginRegisterHandler();
 
-    public RegisterPanel(JFrame loginFrame, DatabaseConnection databaseConnection) {
-    	 setPreferredSize(new Dimension(WIDTH, HEIGHT));
-         
-         try {
-             // Load the image
-             background = ImageIO.read(getClass().getResourceAsStream("/Assets/200Background.png"));
-         } catch (IOException e) {
-             // Handle the IOException (e.g., print an error message)
-             e.printStackTrace();
-         }
-         
-         
-         setLayout(new GridBagLayout()); 
-         GridBagConstraints gridm = new GridBagConstraints();
+
+    public RegisterPanel(LoginFrame loginFrame) {
+
+    	setPreferredSize(new Dimension(WIDTH, HEIGHT));    
+        setLayout(new GridBagLayout()); 
+        GridBagConstraints gridm = new GridBagConstraints();
  		
  	
  		gridm.gridx = 0;
@@ -43,7 +30,6 @@ public class RegisterPanel extends JPanel {
  		
  		JTextField name_input = new JTextField(20);
  		gridm.gridy ++;
- 		name.setForeground(Color.white);
  		add(name_input, gridm);
  		
  		//Username
@@ -54,7 +40,6 @@ public class RegisterPanel extends JPanel {
  		
  		JTextField u_name_input = new JTextField(20);
  		gridm.gridy ++;
- 		u_name_input.setForeground(Color.white);
  		add(u_name_input, gridm);
  		
  		//Password
@@ -65,7 +50,6 @@ public class RegisterPanel extends JPanel {
  		
  		JTextField password_input = new JTextField(20);
  		gridm.gridy ++;
- 		password_input.setForeground(Color.white);
  		add(password_input, gridm);
  		
  		//Email
@@ -76,7 +60,6 @@ public class RegisterPanel extends JPanel {
  		
  		JTextField email_input = new JTextField(20);
  		gridm.gridy ++;
- 		email_input.setForeground(Color.white);
  		add(email_input, gridm);
          
  		gridm.gridy ++;
@@ -93,13 +76,15 @@ public class RegisterPanel extends JPanel {
 
   			@Override
   			public void actionPerformed(ActionEvent e) {
-  				// TODO Auto-generated method stub	
-  				
-  				LoginRegisterHandler logregHandler = new LoginRegisterHandler(databaseConnection);
+
   				int val = logregHandler.Register(name_input.getText(), u_name_input.getText(), password_input.getText(), email_input.getText());
-  			
+				
   				if(val == 1) {
-  					// Success Scenario
+					JOptionPane.showMessageDialog(loginFrame, "Registration is succesful!");
+					loginFrame.getLogRegPanel().removeAll();
+					loginFrame.getLogRegPanel().add(loginFrame.getLoginPanel());
+					loginFrame.getLogRegPanel().revalidate();
+					loginFrame.revalidate();
   				}
   				else if (val == -1) {
   					JOptionPane.showMessageDialog(loginFrame, "This username is taken.");
@@ -118,11 +103,10 @@ public class RegisterPanel extends JPanel {
     }
     
     
-    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         // Draw the background image at the top-left corner of the panel
-        g.drawImage(background, 0, 0, 1600, 900, null);
+        g.drawImage(Constants.background, 0, 0, 1600, 900, null);
     }
 }
