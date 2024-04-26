@@ -1,33 +1,30 @@
 package tr.edu.ku;
 
 import java.awt.*;
-import java.io.IOException; // Import IOException for handling the exception
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public class FireBall implements Cloneable {
-    private static final int SIZE = 16;
-    private static final int SPEED_X = 0;
-    private static final int SPEED_Y = -2; //Start with vertical speed
+public class FireBall implements Serializable {
 
-    private double x = GamePanel.WIDTH / 2 - SIZE / 2;
-    private double y = 800;
-    private double speedX = SPEED_X;
-	private double speedY = SPEED_Y;
-
+    private double x;
+    private double y;
+    private double speedX = Constants.FIREBALL_SPEEDX;
+	private double speedY = Constants.FIREBALL_SPEEDY;
+	private int size = Constants.FIREBALL_SIZE;
 	private boolean isVisible= true;
-	private BufferedImage image;
 
-	public FireBall() {
-		try {
-            // Load the image
-            image = ImageIO.read(getClass().getResourceAsStream("/Assets/200Fireball.png"));
-        } catch (IOException e) {
-            // Handle the IOException (e.g., print an error message)
-            e.printStackTrace();
-        }
+	public FireBall(double x, double y) {
+		this.x = x;
+		this.y = y;
 	}
     
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int s) {
+		this.size = s;
+	}
     
     public double getSpeedX() {
 		return speedX;
@@ -41,16 +38,12 @@ public class FireBall implements Cloneable {
 		return speedY;
 	}
 
-	public int getSize() {
-		return SIZE;
-	}
-
 	public void setSpeedY(double speedY) {
 		this.speedY = speedY;
 	}
 
     public boolean intersects(Rectangle rect) {
-        return new Rectangle((int) x, (int) y, SIZE, SIZE).intersects(rect);
+        return new Rectangle((int) x, (int) y, Constants.FIREBALL_SIZE, Constants.FIREBALL_SIZE).intersects(rect);
     }
 
 	public double getX() {
@@ -70,7 +63,7 @@ public class FireBall implements Cloneable {
 	}
 
 	public Rectangle getBounds() {
-		return new Rectangle((int) x, (int) y, SIZE, SIZE);
+		return new Rectangle((int) x, (int) y, Constants.FIREBALL_SIZE, Constants.FIREBALL_SIZE);
 	}
 
 	public boolean isVisible() {
@@ -81,25 +74,15 @@ public class FireBall implements Cloneable {
 		this.isVisible = b;
 	}
 
-	public BufferedImage getImage() {
-		return image;
-	}
-
 	public Rectangle getRectangle() {
-		return new Rectangle((int) x, (int) y, SIZE, SIZE);
+		return new Rectangle((int) x, (int) y, Constants.FIREBALL_SIZE, Constants.FIREBALL_SIZE);
 	}
 
 	public void reset() {
-		x = GamePanel.WIDTH / 2 - SIZE / 2;
+		x = Constants.GAMEPANEL_WIDTH / 2 - Constants.FIREBALL_SIZE / 2;
       	y = 700;
-        speedX = SPEED_X;
-	    speedY = SPEED_Y;
+        speedX = Constants.FIREBALL_SPEEDX;
+	    speedY = Constants.FIREBALL_SPEEDY;
 	}
-
-
-	@Override
-	 public Object clone() throws CloneNotSupportedException {
-	 return super.clone();
-	 }
 
 }
