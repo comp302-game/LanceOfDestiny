@@ -53,13 +53,13 @@ class Renderer {
         
         //PAINT THE LABELS THAT USER CAN CHOOSE FROM
         SimpleBarrier newSBarrier = new SimpleBarrier(1605, 20, 32, 20); 
-        g.drawImage(newSBarrier.getImage(), (int) newSBarrier.getX(), (int) newSBarrier.getY(), newSBarrier.getWidth(), newSBarrier.getHeight(), null);
+        g.drawImage(Constants.simple_image, (int) newSBarrier.getX(), (int) newSBarrier.getY(), newSBarrier.getWidth(), newSBarrier.getHeight(), null);
 
         ReinforcedBarrier newRBarrier = new ReinforcedBarrier(1605, 70, 32, 20); 
-        g.drawImage(newRBarrier.getImage(), (int) newRBarrier.getX(), (int) newRBarrier.getY(), newRBarrier.getWidth(), newRBarrier.getHeight(), null);
+        g.drawImage(Constants.firm_image, (int) newRBarrier.getX(), (int) newRBarrier.getY(), newRBarrier.getWidth(), newRBarrier.getHeight(), null);
 
         ExplosiveBarrier newEBarrier = new ExplosiveBarrier(1605, 120, 32, 20); 
-        g.drawImage(newEBarrier.getImage(), (int) newEBarrier.getX(), (int) newEBarrier.getY(), newEBarrier.getWidth(), newEBarrier.getHeight(), null);
+        g.drawImage(Constants.explosive_image, (int) newEBarrier.getX(), (int) newEBarrier.getY(), newEBarrier.getWidth(), newEBarrier.getHeight(), null);
 
 
         
