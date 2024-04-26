@@ -8,6 +8,7 @@ public class KeyboardInputHandler  {
     private static boolean rightPressed = false;
     private static boolean A_pressed = false;
     private static boolean D_pressed = false;
+    private static boolean X_Pressed = false;
 
 
     public void keyPressed(KeyEvent e) {
@@ -20,6 +21,8 @@ public class KeyboardInputHandler  {
             A_pressed = true;
         } else if (key == KeyEvent.VK_D) {
             D_pressed = true;
+        } else if (key == KeyEvent.VK_X) {
+            X_Pressed = true;
         }
     }
 
@@ -53,6 +56,12 @@ public class KeyboardInputHandler  {
 		return D_pressed;
 	}
 
+    public static boolean getX_Pressed() {
+		return X_Pressed;
+	}
 
+    public static void setXPressed(boolean b) {
+		X_Pressed = false;
+	}
 
 }
