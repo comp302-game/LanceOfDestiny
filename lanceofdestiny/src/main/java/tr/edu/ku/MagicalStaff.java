@@ -2,32 +2,23 @@ package tr.edu.ku;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.io.IOException; // Import IOException for handling the exception
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
 
-public class MagicalStaff implements Cloneable {
+public class MagicalStaff implements Serializable{
     private int WIDTH = 160; //%10 of screen width
     private int HEIGHT = 20;
-    private double SPEED = 1.34; //160 pixels per second
+    private double SPEED = 2; // not 160 pixels per second
     private double rotationAngle = 0.0;
     private double rotationSpeed = 0.375; //45 degrees per second
 
-    private double center_x = GamePanel.WIDTH / 2; // Initialize x and y points of the center of the staff
-    private double center_y = GamePanel.HEIGHT- 40;
+    private double center_x = Constants.GAMEPANEL_WIDTH / 2;
+    private double center_y = Constants.GAMEPANEL_HEIGHT - 40;
 
-    private BufferedImage image;
     private boolean collideable = true;
 
     public MagicalStaff() {
-        try {
-            // Load the image
-            image = ImageIO.read(getClass().getResourceAsStream("/Assets/200Player.png"));
-        } catch (IOException e) {
-            // Handle the IOException (e.g., print an error message)
-            e.printStackTrace();
-        }
+
     }
 
 	public double getX() {
@@ -106,20 +97,11 @@ public class MagicalStaff implements Cloneable {
     }
 
 
-    public BufferedImage getImage() {
-	    return image;
-	}
-
     public void reset() {
         rotationAngle = 0;
-        center_x = GamePanel.WIDTH / 2;
-        center_y = GamePanel.HEIGHT- 40;
+        center_x = Constants.GAMEPANEL_WIDTH / 2;
+        center_y = Constants.GAMEPANEL_HEIGHT- 40;
     }
 
-    @Override
-	public Object clone() throws CloneNotSupportedException {
-	return super.clone();
-	}
-    
     
 }

@@ -328,7 +328,7 @@ public class MovementHandler {
 		 if (KeyboardInputHandler.getLeftPressed() && staff.getX() > staff.getWidth()/2) {
 	        staff.setX(staff.getX() - staff.getSpeed());
 	        }
-	     if (KeyboardInputHandler.getRightPressed() && staff.getX() < GamePanel.WIDTH - staff.getWidth()/2) {
+	     if (KeyboardInputHandler.getRightPressed() && staff.getX() < Constants.GAMEPANEL_WIDTH- staff.getWidth()/2) {
 	    	 staff.setX(staff.getX() + staff.getSpeed());
 	        }
 		if (KeyboardInputHandler.getA_Pressed() && staff.getRotationAngle() < 45) {
@@ -360,7 +360,7 @@ public class MovementHandler {
 			bounceFromWall(ball);
 		}
 
-		if (ball.getY() >= GamePanel.HEIGHT) { //Fireball falls below condition
+		if (ball.getY() >= Constants.GAMEPANEL_HEIGHT) { //Fireball falls below condition
 			fireball_status = 1;
 			KeyboardInputHandler.setXPressed(false);
 		}
@@ -372,7 +372,7 @@ public class MovementHandler {
 
 	private void bounceFromWall(FireBall ball) {
 	
-		if (ball.getX() <= 0 || ball.getX() >= GamePanel.WIDTH - ball.getSize()) {
+		if (ball.getX() <= 0 || ball.getX() >= Constants.GAMEPANEL_WIDTH - ball.getSize()) {
 			ball.setSpeedX(ball.getSpeedX()* -1);
 
 		}

@@ -1,7 +1,7 @@
 package tr.edu.ku;
 
-import java.util.ArrayList;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class CollisionHandler {
