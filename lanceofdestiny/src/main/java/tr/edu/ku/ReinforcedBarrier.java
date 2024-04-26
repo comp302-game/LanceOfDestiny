@@ -2,7 +2,6 @@ package tr.edu.ku;
 
 import java.io.IOException; // Import IOException for handling the exception
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 
 public class ReinforcedBarrier extends Barrier {
     private int hitsTaken;
