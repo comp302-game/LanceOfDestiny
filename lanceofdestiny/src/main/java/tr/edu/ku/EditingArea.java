@@ -65,18 +65,6 @@ public class EditingArea {
     }
 
 
-    public ArrayList<SimpleBarrier> getSimpleBarriers() {
-        return simpleBarriers;
-    }
-
-    public ArrayList<ReinforcedBarrier> getReinforcedBarriers() {
-        return reinforcedBarriers;
-    }
-
-    public ArrayList<ExplosiveBarrier> getExplosiveBarriers() {
-        return explosiveBarriers;
-    }
-
     private void reset() {
         simpleBarriers.clear();
         reinforcedBarriers.clear();
@@ -88,35 +76,10 @@ public class EditingArea {
         
         reset();
 
-		for(int i = 0; i<layout.getSimpleBarriers().size(); i++){
-			SimpleBarrier temp = layout.getSimpleBarriers().get(i);
-			try {
-				SimpleBarrier sBarrier = (SimpleBarrier) temp.clone();
-				simpleBarriers.add(sBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		for(int i = 0; i<layout.getReinforcedBarriers().size(); i++){
-			ReinforcedBarrier temp = layout.getReinforcedBarriers().get(i);
-			try {
-				ReinforcedBarrier rBarrier = (ReinforcedBarrier) temp.clone();
-				reinforcedBarriers.add(rBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		for(int i = 0; i<layout.getExplosiveBarriers().size(); i++){
-			ExplosiveBarrier temp = layout.getExplosiveBarriers().get(i);
-			try {
-				ExplosiveBarrier eBarrier = (ExplosiveBarrier) temp.clone();
-				explosiveBarriers.add(eBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
+        setSimpleBarriers(layout.getSimpleBarriers());
+		setReinforcedBarriers(layout.getReinforcedBarriers());
+		setExplosiveBarriers(layout.getExplosiveBarriers());
+		
     }
 
 
@@ -160,7 +123,34 @@ public class EditingArea {
             explosiveBarriers.add(eBarrier);
         }
 
-    } 
+    }
+    
+    
+
+    
+    public ArrayList<SimpleBarrier> getSimpleBarriers() {
+        return simpleBarriers;
+    }
+
+    public ArrayList<ReinforcedBarrier> getReinforcedBarriers() {
+        return reinforcedBarriers;
+    }
+
+    public ArrayList<ExplosiveBarrier> getExplosiveBarriers() {
+        return explosiveBarriers;
+    }
+
+	public void setSimpleBarriers(ArrayList<SimpleBarrier> sBarriers) {
+		this.simpleBarriers = sBarriers;
+	}
+
+	public void setReinforcedBarriers(ArrayList<ReinforcedBarrier> rBarriers) {
+		this.reinforcedBarriers = rBarriers;
+	}
+
+	public void setExplosiveBarriers(ArrayList<ExplosiveBarrier> eBarriers) {
+		this.explosiveBarriers = eBarriers;
+	}
 
     
 }

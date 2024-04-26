@@ -3,16 +3,10 @@ package tr.edu.ku;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException; // Import IOException for handling the exception
-import javax.imageio.ImageIO;
 
 
 public class EditorPanel extends JPanel implements MouseMotionListener, MouseListener {
     
-    static final int WIDTH = 1670; //extend the panel for labels
-    static final int HEIGHT = 900;
-
     private EditingArea editingArea = new EditingArea();
     private Renderer renderer = new Renderer();
 
@@ -22,27 +16,17 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
     private Rectangle boundary = new Rectangle(0, 40, 1600, 610); //Allowable barrier placement area
 
     private Barrier selectedBarrier;
-
+    
     private Point initialClick;
     private boolean isDragging = false;
     private boolean isEditing = false;
     private double prev_x;
     private double prev_y;
-    
 
-    private BufferedImage background;
 
     public EditorPanel() {
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        
-        try {
-            // Load the image
-            background = ImageIO.read(getClass().getResourceAsStream("/Assets/200Background.png"));
-        } catch (IOException e) {
-            // Handle the IOException (e.g., print an error message)
-            e.printStackTrace();
-        }
 
+        setPreferredSize(new Dimension(Constants.EDITORPANEL_WIDTH, Constants.EDITORPANEL_HEIGHT));
         setFocusable(true);   
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -52,11 +36,17 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(background, 0, 0, 1600, 900, null);
+        g.drawImage(Constants.background, 0, 0, 1600, 900, null);
 
         if (!(selectedBarrier == null) && selectedBarrier.isVisible()) { //If player has selected a barrier and dragging it print the selected barrier
-            g.drawImage(selectedBarrier.getImage(), (int) selectedBarrier.getX(), (int) selectedBarrier.getY(), selectedBarrier.getWidth(), selectedBarrier.getHeight(), null);
+            if(selectedBarrier instanceof SimpleBarrier) {
+                g.drawImage(Constants.simple_image, (int) selectedBarrier.getX(), (int) selectedBarrier.getY(), selectedBarrier.getWidth(), selectedBarrier.getHeight(), null);}
+            else if(selectedBarrier instanceof ReinforcedBarrier) {
+                g.drawImage(Constants.firm_image, (int) selectedBarrier.getX(), (int) selectedBarrier.getY(), selectedBarrier.getWidth(), selectedBarrier.getHeight(), null);}
+            else if(selectedBarrier instanceof ExplosiveBarrier) {
+                g.drawImage(Constants.explosive_image, (int) selectedBarrier.getX(), (int) selectedBarrier.getY(), selectedBarrier.getWidth(), selectedBarrier.getHeight(), null);}
         }
+
 
         // Create dashed line
         Graphics2D g2d = (Graphics2D) g;
@@ -95,13 +85,10 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
     
     
     //Save layout to players layout list
-    public void saveLayout(Player player) {
+    public void saveLayout(SaveLoadLayout layout_manager) {
         try {
             editingArea.checkCorrectNum();
-
-            //Add layout to player's layout list.
-            Layout layout = new Layout(editingArea.getSimpleBarriers(), editingArea.getReinforcedBarriers(), editingArea.getExplosiveBarriers());
-            player.getLayouts().add(layout);
+            layout_manager.SaveLayout(editingArea);
             System.out.println("Layout saved to player's layout saves.");
 
         } catch (Exception e) {
@@ -131,15 +118,15 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
     public void mousePressed(MouseEvent e) {
         //Check if labels are clicked
         if (simpleLabel.contains(e.getPoint()))  {
-            SimpleBarrier newSBarrier = new SimpleBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), 32, 20);
+            SimpleBarrier newSBarrier = new SimpleBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT);
             selectedBarrier = newSBarrier;
             initialClick = e.getPoint();
             isDragging = true;
-      
+    
         }
 
         else if (reinforcedLabel.contains(e.getPoint()))  {
-            ReinforcedBarrier newRBarrier = new ReinforcedBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), 32, 20);
+            ReinforcedBarrier newRBarrier = new ReinforcedBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT);
             selectedBarrier = newRBarrier;
             initialClick = e.getPoint();
             isDragging = true;
@@ -147,7 +134,7 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         }
 
         else if (explosiveLabel.contains(e.getPoint()))  {
-            ExplosiveBarrier newEBarrier = new ExplosiveBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), 32, 20);
+            ExplosiveBarrier newEBarrier = new ExplosiveBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT);
             selectedBarrier = newEBarrier;
             initialClick = e.getPoint();
             isDragging = true;
@@ -198,26 +185,26 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         if (selectedBarrier != null){
         isDragging = false;
 
-        try {
-            editingArea.checkValidPlacement(selectedBarrier);
-        } catch (Exception e) {
-            System.out.println("Invalid action: "+e.getMessage());
-            selectedBarrier.setX(prev_x);
-            selectedBarrier.setY(prev_y); 
-        } 
-        
+    
         if(boundary.contains(selectedBarrier.getBounds()) && isEditing == false) {
 
-            if (selectedBarrier instanceof SimpleBarrier) {
-                editingArea.getSimpleBarriers().add((SimpleBarrier) selectedBarrier);
-            }
+             try {
+                editingArea.checkValidPlacement(selectedBarrier);
 
-            else if (selectedBarrier instanceof ReinforcedBarrier) {
-                editingArea.getReinforcedBarriers().add((ReinforcedBarrier) selectedBarrier);
-            }
+                if (selectedBarrier instanceof SimpleBarrier) {
+                    editingArea.getSimpleBarriers().add((SimpleBarrier) selectedBarrier);
+                }
 
-            else if (selectedBarrier instanceof ExplosiveBarrier) {
-                editingArea.getExplosiveBarriers().add((ExplosiveBarrier) selectedBarrier);
+                else if (selectedBarrier instanceof ReinforcedBarrier) {
+                    editingArea.getReinforcedBarriers().add((ReinforcedBarrier) selectedBarrier);
+                }
+
+                else if (selectedBarrier instanceof ExplosiveBarrier) {
+                    editingArea.getExplosiveBarriers().add((ExplosiveBarrier) selectedBarrier);
+                }
+
+            } catch (Exception e) {
+                System.out.println("Invalid action: "+e.getMessage());
             }
         }
 
@@ -226,12 +213,24 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         }
     
         
-        if(boundary.contains(selectedBarrier.getBounds()) == false && isEditing) {
+        else if(boundary.contains(selectedBarrier.getBounds()) && isEditing) {
+            
+            try {
+                editingArea.checkValidPlacement(selectedBarrier);
+            } catch (Exception e) {
+                System.out.println("Invalid action: "+e.getMessage());
+                selectedBarrier.setX(prev_x);
+                selectedBarrier.setY(prev_y); 
+            }
+        }
+
+
+        else if(boundary.contains(selectedBarrier.getBounds()) == false && isEditing) {
             selectedBarrier.setX(prev_x);
             selectedBarrier.setY(prev_y);  
         }
 
-        
+
         selectedBarrier = null;
         isEditing = false;
         }
