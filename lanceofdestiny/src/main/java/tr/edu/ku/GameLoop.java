@@ -5,7 +5,6 @@ public class GameLoop implements Runnable {
     private EditorPanel editingPanel;
     private GamePanel gamePanel;
 
-
     private int gameMode; //1 for Running, 0 for Editing 
 
     private boolean running;
