@@ -1,24 +1,19 @@
 package tr.edu.ku;
 
-import java.io.IOException; // Import IOException for handling the exception
-import javax.imageio.ImageIO;
+import java.util.Random;
 
 public class ReinforcedBarrier extends Barrier {
     private int hitsTaken;
-    private static final int MAX_HITS = 3;
+    private int MAX_HITS = 3;
 
     public ReinforcedBarrier(int x, int y, int width, int height) {
         super(x, y, width, height);
         this.hitsTaken = 0;
 
-        try {
-            // Load the image
-            image = ImageIO.read(getClass().getResourceAsStream("/Assets/200Firm.png"));
-        } catch (IOException e) {
-            // Handle the IOException (e.g., print an error message)
-            e.printStackTrace();
-        }
-
+        // Create a Random object
+        Random random = new Random();
+        // Generate a random number between 0 and 3 (inclusive)
+        MAX_HITS = random.nextInt(4) + 3;
     }
 
     public void hit() {
@@ -28,5 +23,9 @@ public class ReinforcedBarrier extends Barrier {
 
     public int getHitsTaken() {
         return hitsTaken;
+    }
+
+    public int getMaxHits() {
+        return MAX_HITS;
     }
 }

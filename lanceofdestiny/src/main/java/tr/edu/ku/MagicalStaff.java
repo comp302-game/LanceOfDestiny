@@ -2,46 +2,38 @@ package tr.edu.ku;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.io.IOException; // Import IOException for handling the exception
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
 
-public class MagicalStaff {
+public class MagicalStaff implements Serializable{
     private int WIDTH = 160; //%10 of screen width
     private int HEIGHT = 20;
-    private int SPEED = 5;
-    private double rotationAngle = 0;
-    private double rotationSpeed = 1;
+    private double SPEED = 2; // not 160 pixels per second
+    private double rotationAngle = 0.0;
+    private double rotationSpeed = 0.375; //45 degrees per second
 
-    private int center_x = GamePanel.WIDTH / 2;
-    private int center_y = GamePanel.HEIGHT- 40;
+    private double center_x = Constants.GAMEPANEL_WIDTH / 2;
+    private double center_y = Constants.GAMEPANEL_HEIGHT - 40;
 
-    private BufferedImage image;
+    private boolean collideable = true;
 
     public MagicalStaff() {
-        try {
-            // Load the image
-            image = ImageIO.read(getClass().getResourceAsStream("/Assets/200Player.png"));
-        } catch (IOException e) {
-            // Handle the IOException (e.g., print an error message)
-            e.printStackTrace();
-        }
+
     }
 
-	public int getX() {
+	public double getX() {
 		return center_x;
 	}
 
-	public void setX(int x) {
+	public void setX(double x) {
 		this.center_x = x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return center_y;
 	}
 
-	public void setY(int y) {
+	public void setY(double y) {
 		this.center_y = y;
 	}
 
@@ -53,7 +45,7 @@ public class MagicalStaff {
 		return HEIGHT;
 	}
 
-	public int getSpeed() {
+	public double getSpeed() {
 		return SPEED;
 	}
 
@@ -69,10 +61,20 @@ public class MagicalStaff {
         this.rotationAngle = angle;
     }
 
+    public boolean isCollideable() {
+		return collideable;
+	}
+
+    public void setCollideable(boolean b) {
+        collideable = b;
+	}
+
+
+
     public Polygon getPolygon() {
         
-        int[] xPoints = {center_x - WIDTH/2 , center_x + WIDTH/2, center_x + WIDTH/2 , center_x - WIDTH/2};
-        int[] yPoints = {center_y - HEIGHT/2 , center_y - HEIGHT/2, center_y + HEIGHT/2 , center_y + HEIGHT/2};
+        int[] xPoints = {(int) (center_x - WIDTH/2) , (int) (center_x + WIDTH/2), (int) (center_x + WIDTH/2) , (int) (center_x - WIDTH/2)};
+        int[] yPoints = {(int) (center_y - HEIGHT/2) , (int) (center_y - HEIGHT/2), (int) (center_y + HEIGHT/2) , (int) (center_y + HEIGHT/2)};
 
         AffineTransform rotation = AffineTransform.getRotateInstance(Math.toRadians(-rotationAngle), center_x, center_y);
         
@@ -95,10 +97,11 @@ public class MagicalStaff {
     }
 
 
-    public BufferedImage getImage() {
-	    return image;
-	}
+    public void reset() {
+        rotationAngle = 0;
+        center_x = Constants.GAMEPANEL_WIDTH / 2;
+        center_y = Constants.GAMEPANEL_HEIGHT- 40;
+    }
 
-    
     
 }
