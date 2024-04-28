@@ -9,8 +9,7 @@ public class GameArea extends JPanel {
 	private ArrayList<SimpleBarrier> simpleBarriers = new ArrayList<>();
 	private ArrayList<ReinforcedBarrier> reinforcedBarriers= new ArrayList<>();
 	private ArrayList<ExplosiveBarrier> explosiveBarriers= new ArrayList<>();
-	private long gameStartingTime = System.currentTimeMillis(); // Record the game starting time
-
+	
 	private MagicalStaff paddle;
 	private FireBall ball;
 
@@ -18,13 +17,13 @@ public class GameArea extends JPanel {
 	private boolean isGameOver = false;
 	private int lives = 3;
 	
-	
+	private long gameStartingTime = System.currentTimeMillis(); // Record the game starting time
 	private MovementHandler movement;
     private CollisionHandler collision;
 	
 	public GameArea(Layout layout) { //Form a game area using the spesified layout
         paddle = new MagicalStaff();
-        ball = new FireBall();
+        ball = new FireBall((Constants.GAMEPANEL_WIDTH / 2 - Constants.FIREBALL_SIZE / 2), 800.0);
 
         // Create deep copies of barrier lists from the layout
         initBarriers(layout);
@@ -37,7 +36,6 @@ public class GameArea extends JPanel {
 
     
 	public void updateGame() {
-
 		int fireball_incident = movement.updateFireBall(ball);
 		if(fireball_incident==1) { //fireball has fallen below
 			lives--;
@@ -56,7 +54,6 @@ public class GameArea extends JPanel {
 		}
 		
 		movement.updateStaff(paddle);
-		
 		movement.updateBarriers(reinforcedBarriers, simpleBarriers, explosiveBarriers);
 
 
@@ -71,42 +68,13 @@ public class GameArea extends JPanel {
     
 
     private void initBarriers(Layout layout) { //Method to clone every barrier into gamearea barrier lists from layout object
-		for(int i = 0; i<layout.getSimpleBarriers().size(); i++){
-			SimpleBarrier temp = layout.getSimpleBarriers().get(i);
-			try {
-				SimpleBarrier sBarrier = (SimpleBarrier) temp.clone();
-				simpleBarriers.add(sBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
 
-		for(int i = 0; i<layout.getReinforcedBarriers().size(); i++){
-			ReinforcedBarrier temp = layout.getReinforcedBarriers().get(i);
-			try {
-				ReinforcedBarrier rBarrier = (ReinforcedBarrier) temp.clone();
-				reinforcedBarriers.add(rBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		for(int i = 0; i<layout.getExplosiveBarriers().size(); i++){
-			ExplosiveBarrier temp = layout.getExplosiveBarriers().get(i);
-			try {
-				ExplosiveBarrier eBarrier = (ExplosiveBarrier) temp.clone();
-				explosiveBarriers.add(eBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
-
+		setSimpleBarriers(layout.getSimpleBarriers());
+		setReinforcedBarriers(layout.getReinforcedBarriers());
+		setExplosiveBarriers(layout.getExplosiveBarriers());
     }
 
 
-    
-    
-    
     //GETTERS AND SETTERS
 	public ArrayList<SimpleBarrier> getSimpleBarriers() {
 		return simpleBarriers;
@@ -121,13 +89,34 @@ public class GameArea extends JPanel {
 	}
 
 
+	public void setSimpleBarriers(ArrayList<SimpleBarrier> sBarriers) {
+		this.simpleBarriers = sBarriers;
+	}
+
+	public void setReinforcedBarriers(ArrayList<ReinforcedBarrier> rBarriers) {
+		this.reinforcedBarriers = rBarriers;
+	}
+
+	public void setExplosiveBarriers(ArrayList<ExplosiveBarrier> eBarriers) {
+		this.explosiveBarriers = eBarriers;
+	}
+
+
 	public MagicalStaff getPaddle() {
 		return paddle;
+	}
+
+	public void setPaddle(MagicalStaff staff) {
+		this.paddle = staff;
 	}
 
 
 	public FireBall getBall() {
 		return ball;
+	}
+
+	public void setBall(FireBall fireball) {
+		this.ball = fireball;
 	}
 
 	public double getScore() {
@@ -162,58 +151,23 @@ public class GameArea extends JPanel {
 	}
 
 	
-	//Method to clone every barrier into gamearea barrier lists. This method loads the saved game into  gamearea.
+	//Method to load every barrier into gamearea barrier lists. This method loads the saved game into  gamearea.
 	//It resets all the game objects and clone the saved ones. Including every game info (lives, score ...)
-    public void LoadSavedGame(SavedGame game) { 
+    public void LoadSavedGame(Game game) { 
 		
         reset();
 
-		for(int i = 0; i<game.getSimpleBarriers().size(); i++){
-			SimpleBarrier temp = game.getSimpleBarriers().get(i);
-			try {
-				SimpleBarrier sBarrier = (SimpleBarrier) temp.clone();
-				simpleBarriers.add(sBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		for(int i = 0; i<game.getReinforcedBarriers().size(); i++){
-			ReinforcedBarrier temp = game.getReinforcedBarriers().get(i);
-			try {
-				ReinforcedBarrier rBarrier = (ReinforcedBarrier) temp.clone();
-				reinforcedBarriers.add(rBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		for(int i = 0; i<game.getExplosiveBarriers().size(); i++){
-			ExplosiveBarrier temp = game.getExplosiveBarriers().get(i);
-			try {
-				ExplosiveBarrier eBarrier = (ExplosiveBarrier) temp.clone();
-				explosiveBarriers.add(eBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		try {
-				ball = (FireBall) game.getBall().clone();
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
+		setSimpleBarriers(game.getSimpleBarriers());
+		setReinforcedBarriers(game.getReinforcedBarriers());
+		setExplosiveBarriers(game.getExplosiveBarriers());
 		
-		try {
-				paddle = (MagicalStaff) game.getStaff().clone();
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		
+		setPaddle(game.getStaff());
+		setBall(game.getBall());
+
 		setScore(game.getScore());
-		isGameOver = game.isGameOver();
 		setLives(game.getLives());
-
+		setGameOver(game.isGameOver());
+		
         collision = new CollisionHandler(ball, paddle, reinforcedBarriers, simpleBarriers, explosiveBarriers);
 		movement = new MovementHandler(collision);
 	

@@ -1,7 +1,7 @@
 package tr.edu.ku;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.io.Serializable;
 
 public class Layout implements Serializable{
 
