@@ -1,9 +1,15 @@
-package tr.edu.ku;
+package tr.edu.ku.GameArea;
 
-import java.util.ArrayList;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+
+import tr.edu.ku.Domain.Barrier;
+import tr.edu.ku.Domain.ExplosiveBarrier;
+import tr.edu.ku.Domain.ReinforcedBarrier;
+import tr.edu.ku.Domain.RewardingBarrier;
+import tr.edu.ku.Domain.SimpleBarrier;
 
 
 public class EditingArea {
@@ -11,12 +17,15 @@ public class EditingArea {
     private ArrayList<SimpleBarrier> simpleBarriers;
 	private ArrayList<ReinforcedBarrier> reinforcedBarriers;
     private ArrayList<ExplosiveBarrier> explosiveBarriers;
+    private ArrayList<RewardingBarrier> rewardingBarriers;
+
     private static final Random random = new Random();
 
     public EditingArea() {
         simpleBarriers = new ArrayList<>();
         reinforcedBarriers = new ArrayList<>();
         explosiveBarriers = new ArrayList<>();
+        rewardingBarriers = new ArrayList<>();
         
     }
 
@@ -45,6 +54,13 @@ public class EditingArea {
                     throw new Exception("Barrier is on collision with another barrier");
                 }
             }
+
+
+            for(RewardingBarrier wBarrier : rewardingBarriers){
+                if(wBarrier.getBounds().intersects(selectedBarrier.getBounds()) && selectedBarrier != wBarrier){
+                    throw new Exception("Barrier is on collision with another barrier");
+                }
+            }
     }
 
 
@@ -62,6 +78,10 @@ public class EditingArea {
         if (explosiveBarriers.size() < 1) {
             throw new Exception("At least 5 Explosive Barriers need to be added to layout.");
         }
+
+        if (rewardingBarriers.size() < 1) {
+            throw new Exception("At least 5 Rewarding Barriers need to be added to layout.");
+        }
     }
 
 
@@ -69,6 +89,7 @@ public class EditingArea {
         simpleBarriers.clear();
         reinforcedBarriers.clear();
         explosiveBarriers.clear();
+        rewardingBarriers.clear();
     }
 
 
@@ -79,15 +100,16 @@ public class EditingArea {
         setSimpleBarriers(layout.getSimpleBarriers());
 		setReinforcedBarriers(layout.getReinforcedBarriers());
 		setExplosiveBarriers(layout.getExplosiveBarriers());
+        setRewardingBarriers(layout.getRewardingBarriers());
 		
     }
 
 
-    public void createEditingArea(int sbar, int rbar, int ebar) {
+    public void createEditingArea(int sbar, int rbar, int ebar, int wbar) {
         
         reset();
 
-        int total_number = sbar + rbar + ebar;
+        int total_number = sbar + rbar + ebar + wbar;
         int maxBarriers_perRow = 30;
         // Define the number of rows needed
         int totalRows = (int) Math.ceil((double) total_number / maxBarriers_perRow);
@@ -123,10 +145,21 @@ public class EditingArea {
             explosiveBarriers.add(eBarrier);
         }
 
+        for(int i=0; i<wbar; i++)  {
+            RewardingBarrier wBarrier = new RewardingBarrier((int) points.get(sbar + rbar + ebar + i).getX(), (int) points.get(sbar + rbar + ebar + i).getY(), 32, 20);
+            rewardingBarriers.add(wBarrier);
+        }
+
     }
     
     
 
+    
+
+
+
+
+    //GETTER SETTERS
     
     public ArrayList<SimpleBarrier> getSimpleBarriers() {
         return simpleBarriers;
@@ -140,6 +173,10 @@ public class EditingArea {
         return explosiveBarriers;
     }
 
+    public ArrayList<RewardingBarrier> getRewardingBarriers() {
+        return rewardingBarriers;
+    }
+
 	public void setSimpleBarriers(ArrayList<SimpleBarrier> sBarriers) {
 		this.simpleBarriers = sBarriers;
 	}
@@ -150,6 +187,10 @@ public class EditingArea {
 
 	public void setExplosiveBarriers(ArrayList<ExplosiveBarrier> eBarriers) {
 		this.explosiveBarriers = eBarriers;
+	}
+
+    public void setRewardingBarriers(ArrayList<RewardingBarrier> wBarriers) {
+		this.rewardingBarriers = wBarriers;
 	}
 
     
