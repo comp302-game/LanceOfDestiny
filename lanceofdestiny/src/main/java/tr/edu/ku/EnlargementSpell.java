@@ -12,6 +12,7 @@ public class EnlargementSpell extends Spell {
         super("Overwhelming FireBall", 30);
     }
 
+    
 
     public void activate(FireBall fireball) {
         SpellController.setOVM(true);

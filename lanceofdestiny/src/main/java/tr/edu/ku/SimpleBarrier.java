@@ -7,3 +7,4 @@ public class SimpleBarrier extends Barrier {
 
     }
 }
+

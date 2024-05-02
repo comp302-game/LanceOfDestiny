@@ -10,6 +10,7 @@ public class Bullet {
     private double y;
     private double speedX;
     private double speedY;
+	
 
 
     public Bullet (Double x, Double y, Double speedX, Double speedY) {
