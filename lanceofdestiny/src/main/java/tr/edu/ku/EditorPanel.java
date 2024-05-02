@@ -1,8 +1,30 @@
-package tr.edu.ku;
+package tr.edu.ku.GameView;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Stroke;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import tr.edu.ku.Constants;
+import tr.edu.ku.Database.SaveLoadLayout;
+import tr.edu.ku.Domain.Barrier;
+import tr.edu.ku.Domain.ExplosiveBarrier;
+import tr.edu.ku.Domain.ReinforcedBarrier;
+import tr.edu.ku.Domain.RewardingBarrier;
+import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.GameArea.EditingArea;
+import tr.edu.ku.Render.Renderer;
 
 
 public class EditorPanel extends JPanel implements MouseMotionListener, MouseListener {
@@ -13,6 +35,8 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
     private Rectangle reinforcedLabel = new Rectangle(1605, 70, 32, 20);
     private Rectangle simpleLabel = new Rectangle(1605, 20, 32, 20);
     private Rectangle explosiveLabel = new Rectangle(1605, 120, 32, 20);
+    private Rectangle rewardingLabel = new Rectangle(1605, 170, 32, 20);
+
     private Rectangle boundary = new Rectangle(0, 40, 1600, 610); //Allowable barrier placement area
 
     private Barrier selectedBarrier;
@@ -45,6 +69,8 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
                 g.drawImage(Constants.firm_image, (int) selectedBarrier.getX(), (int) selectedBarrier.getY(), selectedBarrier.getWidth(), selectedBarrier.getHeight(), null);}
             else if(selectedBarrier instanceof ExplosiveBarrier) {
                 g.drawImage(Constants.explosive_image, (int) selectedBarrier.getX(), (int) selectedBarrier.getY(), selectedBarrier.getWidth(), selectedBarrier.getHeight(), null);}
+            else if(selectedBarrier instanceof RewardingBarrier) {
+                g.drawImage(Constants.rewarding_image, (int) selectedBarrier.getX(), (int) selectedBarrier.getY(), selectedBarrier.getWidth(), selectedBarrier.getHeight(), null);}
         }
 
 
@@ -73,6 +99,7 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         g.drawString(""+editingArea.getSimpleBarriers().size(), 1645, 35);
         g.drawString(""+editingArea.getReinforcedBarriers().size(), 1645, 85);
         g.drawString(""+editingArea.getExplosiveBarriers().size(), 1645, 135);
+        g.drawString(""+editingArea.getRewardingBarriers().size(), 1645, 185);
 
         renderer.renderEditing((Graphics2D) g, editingArea);
         }
@@ -89,10 +116,10 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         try {
             editingArea.checkCorrectNum();
             layout_manager.SaveLayout(editingArea);
-            System.out.println("Layout saved to player's layout saves.");
+            JOptionPane.showMessageDialog(this, "Layout saved to player's layout saves.");
 
         } catch (Exception e) {
-            System.out.println("Invalid action: "+e.getMessage());
+            JOptionPane.showMessageDialog(this, "Invalid action: "+e.getMessage());
         } 
     }
 
@@ -141,6 +168,15 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
       
         }
 
+        else if (rewardingLabel.contains(e.getPoint()))  {
+            RewardingBarrier newRBarrier = new RewardingBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT);
+            selectedBarrier = newRBarrier;
+            initialClick = e.getPoint();
+            isDragging = true;
+        }
+
+
+
         //Check if already existing barriers are clicked
         else {
             for(SimpleBarrier sbarrier : editingArea.getSimpleBarriers()){
@@ -175,6 +211,18 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
                     prev_y = eBarrier.getY();
                 }
             }
+
+
+            for(RewardingBarrier wBarrier : editingArea.getRewardingBarriers()){
+                if(wBarrier.getBounds().contains(e.getPoint())){
+                    selectedBarrier = wBarrier;
+                    initialClick = e.getPoint();
+                    isDragging = true;
+                    isEditing = true;
+                    prev_x = wBarrier.getX();
+                    prev_y = wBarrier.getY();
+                }
+            }
         }
     }
 
@@ -184,7 +232,6 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
 
         if (selectedBarrier != null){
         isDragging = false;
-
     
         if(boundary.contains(selectedBarrier.getBounds()) && isEditing == false) {
 
@@ -201,6 +248,10 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
 
                 else if (selectedBarrier instanceof ExplosiveBarrier) {
                     editingArea.getExplosiveBarriers().add((ExplosiveBarrier) selectedBarrier);
+                }
+
+                else if (selectedBarrier instanceof RewardingBarrier) {
+                    editingArea.getRewardingBarriers().add((RewardingBarrier) selectedBarrier);
                 }
 
             } catch (Exception e) {
@@ -229,7 +280,6 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
             selectedBarrier.setX(prev_x);
             selectedBarrier.setY(prev_y);  
         }
-
 
         selectedBarrier = null;
         isEditing = false;
