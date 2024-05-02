@@ -1,4 +1,4 @@
-package tr.edu.ku;
+package tr.edu.ku.Domain;
 
 import java.awt.*;
 import java.util.Random;
@@ -14,7 +14,7 @@ public class Barrier implements Serializable {
   protected Boolean collideable;
   protected double speedX = 0.28; //Aprrox L/4 pixels /s
   protected boolean isDynamic;
-  protected boolean isMoving;
+  public boolean isMoving;
   protected double dx;
 
   public Barrier(int x, int y, int width, int height) {
@@ -34,7 +34,7 @@ public class Barrier implements Serializable {
     double randomNumber = random.nextDouble();
 
  	// With %20 probability the barrier is dynamic
-    if (randomNumber < 0.2) {
+    if (randomNumber <= 0.2) {
 		isDynamic = true;
     }
 }
@@ -138,3 +138,4 @@ public class Barrier implements Serializable {
 	}
 
 }
+

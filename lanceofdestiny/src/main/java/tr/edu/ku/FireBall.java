@@ -1,7 +1,9 @@
-package tr.edu.ku;
+package tr.edu.ku.Domain;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.Serializable;
+
+import tr.edu.ku.Constants;
 
 public class FireBall implements Serializable {
 
@@ -11,6 +13,7 @@ public class FireBall implements Serializable {
 	private double speedY = Constants.FIREBALL_SPEEDY;
 	private int size = Constants.FIREBALL_SIZE;
 	private boolean isVisible= true;
+	private boolean collideable = true;
 
 	public FireBall(double x, double y) {
 		this.x = x;
@@ -18,6 +21,30 @@ public class FireBall implements Serializable {
 	}
     
 
+
+	public void reset() {
+		x = Constants.GAMEPANEL_WIDTH / 2 - Constants.FIREBALL_SIZE / 2;
+      	y = 700;
+        speedX = Constants.FIREBALL_SPEEDX;
+	    speedY = Constants.FIREBALL_SPEEDY;
+	}
+
+
+	public boolean intersects(Rectangle rect) {
+        return new Rectangle((int) x, (int) y, size, size).intersects(rect);
+    }
+
+	
+	public Rectangle getBounds() {
+		return new Rectangle((int) x, (int) y, size, size);
+	}
+
+
+
+
+
+
+//GETTER SETTER
 	public int getSize() {
 		return size;
 	}
@@ -42,10 +69,6 @@ public class FireBall implements Serializable {
 		this.speedY = speedY;
 	}
 
-    public boolean intersects(Rectangle rect) {
-        return new Rectangle((int) x, (int) y, Constants.FIREBALL_SIZE, Constants.FIREBALL_SIZE).intersects(rect);
-    }
-
 	public double getX() {
 		return x;
 	}
@@ -62,10 +85,6 @@ public class FireBall implements Serializable {
 		this.y = y;
 	}
 
-	public Rectangle getBounds() {
-		return new Rectangle((int) x, (int) y, Constants.FIREBALL_SIZE, Constants.FIREBALL_SIZE);
-	}
-
 	public boolean isVisible() {
 		return isVisible;
 	}
@@ -74,15 +93,12 @@ public class FireBall implements Serializable {
 		this.isVisible = b;
 	}
 
-	public Rectangle getRectangle() {
-		return new Rectangle((int) x, (int) y, Constants.FIREBALL_SIZE, Constants.FIREBALL_SIZE);
+	public boolean isCollideable() {
+		return collideable;
 	}
 
-	public void reset() {
-		x = Constants.GAMEPANEL_WIDTH / 2 - Constants.FIREBALL_SIZE / 2;
-      	y = 700;
-        speedX = Constants.FIREBALL_SPEEDX;
-	    speedY = Constants.FIREBALL_SPEEDY;
+	public void setCollideable(boolean b){
+		this.collideable = b;
 	}
 
 }

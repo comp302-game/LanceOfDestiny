@@ -1,4 +1,4 @@
-package tr.edu.ku;
+package tr.edu.ku.Domain;
 
 import java.util.Random;
 
