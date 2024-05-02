@@ -139,4 +139,3 @@ public class Barrier implements Serializable {
 
 }
 
-
