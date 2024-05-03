@@ -1,8 +1,18 @@
-package tr.edu.ku;
+package tr.edu.ku.Render;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 
-class Renderer {
+import tr.edu.ku.Constants;
+import tr.edu.ku.SpellController;
+import tr.edu.ku.Domain.Bullet;
+import tr.edu.ku.Domain.ExplosiveBarrier;
+import tr.edu.ku.Domain.ReinforcedBarrier;
+import tr.edu.ku.Domain.RewardingBarrier;
+import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.GameArea.EditingArea;
+import tr.edu.ku.GameArea.GameArea;
+
+public class Renderer {
 
     private Animator animator;
 
@@ -39,10 +49,29 @@ class Renderer {
             else if (ebarrier.isExploded()) {
                 animator.renderExplosiveFalling(g, ebarrier);
             }
+        }
 
 
+        // Draw reinforced barriers
+        for (RewardingBarrier wbarrier : gamePanel.getRewardingBarriers()) {
+            if (wbarrier.isVisible() && wbarrier.isBroken() == false) {
+                animator.renderRewardingBarrier(g, wbarrier);
+            }
+
+            else if (wbarrier.isBroken()) {
+                animator.renderRewardingFalling(g, wbarrier);
+            }
+        }
+
+
+        if(SpellController.is_HEX_Active()) {
+            for (Bullet bullet : SpellController.getCurrentHEX().getBullets()) {
+                animator.renderBullets(g, bullet);
+            }
         }
     }
+
+    
 
 
 
@@ -60,6 +89,9 @@ class Renderer {
 
         ExplosiveBarrier newEBarrier = new ExplosiveBarrier(1605, 120, 32, 20); 
         g.drawImage(Constants.explosive_image, (int) newEBarrier.getX(), (int) newEBarrier.getY(), newEBarrier.getWidth(), newEBarrier.getHeight(), null);
+
+        RewardingBarrier newWBarrier = new RewardingBarrier(1605, 170, 32, 20); 
+        g.drawImage(Constants.rewarding_image, (int) newWBarrier.getX(), (int) newWBarrier.getY(), newWBarrier.getWidth(), newWBarrier.getHeight(), null);
 
 
         
@@ -81,6 +113,13 @@ class Renderer {
         for (ExplosiveBarrier eBarrier : editingArea.getExplosiveBarriers()) {
             if (eBarrier.isVisible()) {
                 animator.renderExplosiveBarrier(g, eBarrier);
+            }
+        }
+
+        // Draw explosive barriers from editor
+        for (RewardingBarrier wBarrier : editingArea.getRewardingBarriers()) {
+            if (wBarrier.isVisible()) {
+                animator.renderRewardingBarrier(g, wBarrier);
             }
         }
 

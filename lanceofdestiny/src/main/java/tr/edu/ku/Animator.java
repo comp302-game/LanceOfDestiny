@@ -1,7 +1,13 @@
-package tr.edu.ku;
+package tr.edu.ku.Render;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+
+import tr.edu.ku.Constants;
+import tr.edu.ku.SpellController;
+import tr.edu.ku.Domain.*;
 
 public class Animator {
 
@@ -20,9 +26,16 @@ public class Animator {
         // Draw the rotated image
         int xpos = (int) (staff.getX()-staff.getWidth()/2);
         int ypos = (int) (staff.getY()-staff.getHeight()/2);
-        g2d.drawImage(Constants.staff_image, xpos, ypos, 160, 20, null);
+        g2d.drawImage(Constants.staff_image, xpos, ypos, staff.getWidth(), staff.getHeight(), null);
+
+        if (SpellController.is_HEX_Active()) {
+            int ypos2 = (int) (staff.getY()-staff.getHeight()/2 - 40);
+            g2d.drawImage(Constants.canon, xpos, ypos2, 160, 60, null);        
+        }
 
         g2d.setTransform(originalTransform);
+
+        
     }
 
     public void renderFireBall(Graphics2D g2d, FireBall fireBall) {
@@ -48,7 +61,15 @@ public class Animator {
         if (barrier.isVisible()) {
             g2d.drawImage(Constants.explosive_image, (int) barrier.getX(), (int) barrier.getY(), barrier.getWidth(), barrier.getHeight(), null);
         }
-    } 
+    }
+    
+
+    public void renderRewardingBarrier(Graphics2D g2d, RewardingBarrier barrier) {
+        if (barrier.isVisible()) {
+            g2d.drawImage(Constants.rewarding_image, (int) barrier.getX(), (int) barrier.getY(), barrier.getWidth(), barrier.getHeight(), null);
+        }
+    }
+
 
     public void renderExplosiveFalling(Graphics2D g2d, ExplosiveBarrier barrier) {
         if (barrier.isVisible()) {
@@ -57,4 +78,19 @@ public class Animator {
             g2d.drawImage(Constants.falling_image, (int) (barrier.getX() + 20), (int) (barrier.getY()+3), 9, 9, null);
         }     
     }
+
+
+    public void renderRewardingFalling(Graphics2D g2d, RewardingBarrier barrier) {
+        if (barrier.isVisible()) {
+            g2d.drawImage(Constants.reward, (int) barrier.getX()+8, (int) barrier.getY()+2, 30, 30, null);
+        }     
+    }
+
+
+    public void renderBullets(Graphics2D g2d, Bullet bullet) {
+        g2d.drawImage(Constants.falling_image, (int) bullet.getX(), (int) bullet.getY(), 9, 9, null); 
+    }
+
+
+
 }

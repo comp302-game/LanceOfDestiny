@@ -1,4 +1,4 @@
-package tr.edu.ku;
+package tr.edu.ku.GameEngine;
 
 import java.awt.event.KeyEvent;
 
@@ -9,6 +9,9 @@ public class KeyboardInputHandler  {
     private static boolean A_pressed = false;
     private static boolean D_pressed = false;
     private static boolean X_Pressed = false;
+    private static boolean O_pressed = false;
+    private static boolean M_pressed = false;
+    private static boolean F_Pressed = false;
 
 
     public void keyPressed(KeyEvent e) {
@@ -62,6 +65,18 @@ public class KeyboardInputHandler  {
 
     public static void setXPressed(boolean b) {
 		X_Pressed = false;
+	}
+
+    public static boolean getO_Pressed() {
+		return O_pressed;
+	}
+
+	public static boolean getM_Pressed() {
+		return M_pressed;
+	}
+
+    public static boolean getF_Pressed() {
+		return F_Pressed;
 	}
 
 }
