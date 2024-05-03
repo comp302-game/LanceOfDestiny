@@ -1,39 +1,33 @@
-package tr.edu.ku;
+package tr.edu.ku.GameView;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException; // Import IOException for handling the exception
-import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import javax.swing.JPanel;
+
+import tr.edu.ku.Constants;
+import tr.edu.ku.Database.SaveLoadGame;
+import tr.edu.ku.GameArea.Layout;
+import tr.edu.ku.GameEngine.KeyboardInputHandler;
+import tr.edu.ku.Render.Renderer;
+import tr.edu.ku.SpellController;
 
 public class GamePanel extends JPanel implements KeyListener {
-    
-    static final int WIDTH = 1600;
-    static final int HEIGHT = 900;
     
     private GameArea gameArea;
     private Renderer renderer = new Renderer();
     private KeyboardInputHandler inputHandler = new KeyboardInputHandler();
-    private BufferedImage background;
-    private BufferedImage heart_icon;
     
     private int gameState = 1; //1 for resume, -1 for pause. Start at resume state.
 
     
     public GamePanel(Layout layout) {
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-
-        try {
-            // Load the image
-            background = ImageIO.read(getClass().getResourceAsStream("/Assets/200Background.png"));
-            heart_icon = ImageIO.read(getClass().getResourceAsStream("/Assets/Heart.png"));
-        } catch (IOException e) {
-            // Handle the IOException (e.g., print an error message)
-            e.printStackTrace();
-        }
-
-
+        setPreferredSize(new Dimension(Constants.GAMEPANEL_WIDTH, Constants.GAMEPANEL_HEIGHT));
         setFocusable(true);    
         addKeyListener(this);
 
@@ -57,7 +51,7 @@ public class GamePanel extends JPanel implements KeyListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(background, 0, 0, 1600, 900, null);
+        g.drawImage(Constants.background, 0, 0, 1600, 900, null);
 
         //Display the score
         g.setColor(Color.WHITE);
@@ -67,8 +61,23 @@ public class GamePanel extends JPanel implements KeyListener {
 
         //Display lives
         for (int i = 0; i < gameArea.getLives(); i++) {
-            g.drawImage(heart_icon, 10 + 25*i, 10, 19, 19, null);
+            g.drawImage(Constants.heart_icon, 10 + 25*i, 10, 19, 19, null);
         }
+
+        //Display Spells
+        g.drawImage(Constants.fireball2x, 600, 8, 25, 25, null); //OWFB SPELL
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 14)); // Font name, style, size
+        g.drawString(""+ (int) gameArea.getOFB().size(), 630, 23);
+
+        g.drawImage(Constants.player2x, 645, 8, 25, 25, null); //OWFB SPELL
+        g.drawString(""+ (int) gameArea.getMSE().size(), 675, 23);
+
+        g.drawImage(Constants.felix, 690, 8, 25, 25, null); //FELIX SPELL
+        g.drawString(""+ (int) gameArea.getFELIX().size(), 720, 23);
+
+        g.drawImage(Constants.hex, 735, 8, 25, 25, null); //HEX SPELL
+        g.drawString(""+ (int) gameArea.getHEX().size(), 765, 23);
 
 
         //Render Game Elements
@@ -106,10 +115,48 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
 
+    //Save layout to players layout list
+    public void saveGame(SaveLoadGame game_manager) {
+        game_manager.SaveGame(gameArea);
+    }
+
 
     @Override
     public void keyPressed(KeyEvent e) {
         inputHandler.keyPressed(e);
+
+        int key = e.getKeyCode();
+        
+        if (key == KeyEvent.VK_O) {
+            
+            if(!gameArea.getOFB().isEmpty() && SpellController.is_OVM_Active() == false) {
+                gameArea.getOFB().get(0).activate(gameArea.getBall());
+                gameArea.getOFB().remove(0);
+            }
+            
+
+        } else if (key == KeyEvent.VK_F) {
+
+            if(!gameArea.getFELIX().isEmpty() && gameArea.getLives() < 3) {
+                gameArea.getFELIX().get(0).activate(gameArea);
+                gameArea.getFELIX().remove(0);
+            }
+            
+        } else if (key == KeyEvent.VK_M) {
+
+            if(!gameArea.getMSE().isEmpty() && SpellController.is_MSE_Active() == false) {
+                gameArea.getMSE().get(0).activate(gameArea.getPaddle());
+                gameArea.getMSE().remove(0);
+            }
+            
+        } else if (key == KeyEvent.VK_H) {
+
+            if(!gameArea.getHEX().isEmpty() && SpellController.is_HEX_Active() == false) {
+                gameArea.getHEX().get(0).activate(gameArea.getPaddle());
+                gameArea.getHEX().remove(0);
+            }
+            
+        }
     }
 
     @Override

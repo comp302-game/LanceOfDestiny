@@ -1,15 +1,37 @@
-package tr.edu.ku;
+package tr.edu.ku.GameArea;
 
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+
+import tr.edu.ku.Constants;
+import tr.edu.ku.Domain.EnlargementSpell;
+import tr.edu.ku.Domain.ExplosiveBarrier;
+import tr.edu.ku.Domain.FelixFelicis;
+import tr.edu.ku.Domain.FireBall;
+import tr.edu.ku.Domain.Hex;
+import tr.edu.ku.Domain.MagicalStaff;
+import tr.edu.ku.Domain.ReinforcedBarrier;
+import tr.edu.ku.Domain.RewardingBarrier;
+import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.Domain.StaffExpansion;
+import tr.edu.ku.GameEngine.CollisionHandler;
+import tr.edu.ku.GameEngine.KeyboardInputHandler;
+import tr.edu.ku.GameEngine.MovementHandler;
+import tr.edu.ku.SpellController;
 
 public class GameArea extends JPanel {
 	
 	private ArrayList<SimpleBarrier> simpleBarriers = new ArrayList<>();
 	private ArrayList<ReinforcedBarrier> reinforcedBarriers= new ArrayList<>();
 	private ArrayList<ExplosiveBarrier> explosiveBarriers= new ArrayList<>();
-	private long gameStartingTime = System.currentTimeMillis(); // Record the game starting time
+	private ArrayList<RewardingBarrier> rewardingBarriers= new ArrayList<>();
+
+	private ArrayList<EnlargementSpell> OFB = new ArrayList<>();
+	private ArrayList<StaffExpansion> MSE = new ArrayList<>();
+	private ArrayList<FelixFelicis> FELIX = new ArrayList<>();
+	private ArrayList<Hex> HEX = new ArrayList<>();
+
 
 	private MagicalStaff paddle;
 	private FireBall ball;
@@ -17,19 +39,20 @@ public class GameArea extends JPanel {
 	private double score = 0;
 	private boolean isGameOver = false;
 	private int lives = 3;
+	private int progression = 0;
 	
-	
+	private long gameStartingTime = System.currentTimeMillis(); // Record the game starting time
 	private MovementHandler movement;
     private CollisionHandler collision;
 	
 	public GameArea(Layout layout) { //Form a game area using the spesified layout
         paddle = new MagicalStaff();
-        ball = new FireBall();
+        ball = new FireBall((Constants.GAMEPANEL_WIDTH / 2 - Constants.FIREBALL_SIZE / 2), 800.0);
 
         // Create deep copies of barrier lists from the layout
         initBarriers(layout);
 
-        collision = new CollisionHandler(ball, paddle, reinforcedBarriers, simpleBarriers, explosiveBarriers);
+        collision = new CollisionHandler(ball, paddle, reinforcedBarriers, simpleBarriers, explosiveBarriers, rewardingBarriers);
 		movement = new MovementHandler(collision);
 
         KeyboardInputHandler.setXPressed(false);
@@ -37,7 +60,6 @@ public class GameArea extends JPanel {
 
     
 	public void updateGame() {
-
 		int fireball_incident = movement.updateFireBall(ball);
 		if(fireball_incident==1) { //fireball has fallen below
 			lives--;
@@ -56,58 +78,96 @@ public class GameArea extends JPanel {
 		}
 		
 		movement.updateStaff(paddle);
-		
-		movement.updateBarriers(reinforcedBarriers, simpleBarriers, explosiveBarriers);
+		movement.updateBarriers(reinforcedBarriers, simpleBarriers, explosiveBarriers, rewardingBarriers);
 
+		if(SpellController.is_HEX_Active()) {
+			movement.updateBullets(SpellController.getCurrentHEX().getBullets());
+		}
 
-		if(collision.checkStaffCollisions() == 1) {
+		int staff_col = collision.checkStaffCollisions();
+
+		if(staff_col == 1) {
 			lives--;
 			if(lives==0) {
 				isGameOver = true;
 			}
+		}
+
+		//create and add spells to inventory
+		else if (staff_col == 2) {
+			if (progression == 0) {
+				HEX.add(new Hex());
+				progression++;
+			}
+			else if(progression == 1) {
+				OFB.add(new EnlargementSpell());
+				progression++;
+			}
+			else if (progression == 2) {
+				MSE.add(new StaffExpansion());
+				progression++;
+			}
+			else if (progression == 3) {
+				FELIX.add(new FelixFelicis());
+				progression = 0;
+			}
+				
 		}
 	}
     
     
 
     private void initBarriers(Layout layout) { //Method to clone every barrier into gamearea barrier lists from layout object
-		for(int i = 0; i<layout.getSimpleBarriers().size(); i++){
-			SimpleBarrier temp = layout.getSimpleBarriers().get(i);
-			try {
-				SimpleBarrier sBarrier = (SimpleBarrier) temp.clone();
-				simpleBarriers.add(sBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
 
-		for(int i = 0; i<layout.getReinforcedBarriers().size(); i++){
-			ReinforcedBarrier temp = layout.getReinforcedBarriers().get(i);
-			try {
-				ReinforcedBarrier rBarrier = (ReinforcedBarrier) temp.clone();
-				reinforcedBarriers.add(rBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
+		setSimpleBarriers(layout.getSimpleBarriers());
+		setReinforcedBarriers(layout.getReinforcedBarriers());
+		setExplosiveBarriers(layout.getExplosiveBarriers());
+		setRewardingBarriers(layout.getRewardingBarriers());
+    }
 
-		for(int i = 0; i<layout.getExplosiveBarriers().size(); i++){
-			ExplosiveBarrier temp = layout.getExplosiveBarriers().get(i);
-			try {
-				ExplosiveBarrier eBarrier = (ExplosiveBarrier) temp.clone();
-				explosiveBarriers.add(eBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
+	
+	//Method to load every barrier into gamearea barrier lists. This method loads the saved game into  gamearea.
+	//It resets all the game objects and clone the saved ones. Including every game info (lives, score ...)
+    public void LoadSavedGame(Game game) { 
+		
+        reset();
 
+		setSimpleBarriers(game.getSimpleBarriers());
+		setReinforcedBarriers(game.getReinforcedBarriers());
+		setExplosiveBarriers(game.getExplosiveBarriers());
+		setRewardingBarriers(game.getRewardingBarriers());
+
+		setMSE(game.getMSE());
+		setFELIX(game.getFELIX());
+		setHEX(game.getHEX());
+		setOFB(game.getOFB());
+
+		setPaddle(game.getStaff());
+		setBall(game.getBall());
+
+		setScore(game.getScore());
+		setLives(game.getLives());
+		setGameOver(game.isGameOver());
+		
+		SpellController.reset();
+        collision = new CollisionHandler(ball, paddle, reinforcedBarriers, simpleBarriers, explosiveBarriers, rewardingBarriers);
+		movement = new MovementHandler(collision);
     }
 
 
-    
-    
-    
+	private void reset() {
+        simpleBarriers.clear();
+        reinforcedBarriers.clear();
+        explosiveBarriers.clear();
+		ball = null;
+		paddle = null;
+		KeyboardInputHandler.setXPressed(false);
+	}
+
+	
+
     //GETTERS AND SETTERS
+
 	public ArrayList<SimpleBarrier> getSimpleBarriers() {
 		return simpleBarriers;
 	}
@@ -120,14 +180,78 @@ public class GameArea extends JPanel {
 		return explosiveBarriers;
 	}
 
+	public ArrayList<RewardingBarrier> getRewardingBarriers() {
+		return rewardingBarriers;
+	}
+
+
+	public void setSimpleBarriers(ArrayList<SimpleBarrier> sBarriers) {
+		this.simpleBarriers = sBarriers;
+	}
+
+	public void setReinforcedBarriers(ArrayList<ReinforcedBarrier> rBarriers) {
+		this.reinforcedBarriers = rBarriers;
+	}
+
+	public void setExplosiveBarriers(ArrayList<ExplosiveBarrier> eBarriers) {
+		this.explosiveBarriers = eBarriers;
+	}
+
+	public void setRewardingBarriers(ArrayList<RewardingBarrier> wBarriers) {
+		this.rewardingBarriers = wBarriers;
+	}
+
+
+	public ArrayList<EnlargementSpell> getOFB() {
+		return OFB;
+	}
+
+	public ArrayList<StaffExpansion> getMSE() {
+		return MSE;
+	}
+
+	public ArrayList<FelixFelicis> getFELIX() {
+		return FELIX;
+	}
+
+	public ArrayList<Hex> getHEX() {
+		return HEX;
+	}
+
+
+	public void setHEX(ArrayList<Hex> hlist) {
+		this.HEX = hlist;
+	}
+
+	public void setMSE(ArrayList<StaffExpansion> slist) {
+		this.MSE = slist;
+	}
+
+	public void setOFB(ArrayList<EnlargementSpell> elist) {
+		this.OFB = elist;
+	}
+
+	public void setFELIX(ArrayList<FelixFelicis> flist) {
+		this.FELIX = flist;
+	}
+
+
 
 	public MagicalStaff getPaddle() {
 		return paddle;
 	}
 
+	public void setPaddle(MagicalStaff staff) {
+		this.paddle = staff;
+	}
+
 
 	public FireBall getBall() {
 		return ball;
+	}
+
+	public void setBall(FireBall fireball) {
+		this.ball = fireball;
 	}
 
 	public double getScore() {
@@ -155,79 +279,12 @@ public class GameArea extends JPanel {
 	}
 
 	public boolean isGameFinished() {
-		if(simpleBarriers.isEmpty() && reinforcedBarriers.isEmpty() && explosiveBarriers.isEmpty()){
+		if(simpleBarriers.isEmpty() && reinforcedBarriers.isEmpty() && explosiveBarriers.isEmpty() && rewardingBarriers.isEmpty()){
 			return true;
 		}
 		else {return false;}
 	}
 
-	
-	//Method to clone every barrier into gamearea barrier lists. This method loads the saved game into  gamearea.
-	//It resets all the game objects and clone the saved ones. Including every game info (lives, score ...)
-    public void LoadSavedGame(SavedGame game) { 
-		
-        reset();
-
-		for(int i = 0; i<game.getSimpleBarriers().size(); i++){
-			SimpleBarrier temp = game.getSimpleBarriers().get(i);
-			try {
-				SimpleBarrier sBarrier = (SimpleBarrier) temp.clone();
-				simpleBarriers.add(sBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		for(int i = 0; i<game.getReinforcedBarriers().size(); i++){
-			ReinforcedBarrier temp = game.getReinforcedBarriers().get(i);
-			try {
-				ReinforcedBarrier rBarrier = (ReinforcedBarrier) temp.clone();
-				reinforcedBarriers.add(rBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		for(int i = 0; i<game.getExplosiveBarriers().size(); i++){
-			ExplosiveBarrier temp = game.getExplosiveBarriers().get(i);
-			try {
-				ExplosiveBarrier eBarrier = (ExplosiveBarrier) temp.clone();
-				explosiveBarriers.add(eBarrier); 
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		try {
-				ball = (FireBall) game.getBall().clone();
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		
-		try {
-				paddle = (MagicalStaff) game.getStaff().clone();
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		
-		setScore(game.getScore());
-		isGameOver = game.isGameOver();
-		setLives(game.getLives());
-
-        collision = new CollisionHandler(ball, paddle, reinforcedBarriers, simpleBarriers, explosiveBarriers);
-		movement = new MovementHandler(collision);
-	
-    }
-
-
-	private void reset() {
-        simpleBarriers.clear();
-        reinforcedBarriers.clear();
-        explosiveBarriers.clear();
-		ball = null;
-		paddle = null;
-		KeyboardInputHandler.setXPressed(false);
-	}
 
 
 }
