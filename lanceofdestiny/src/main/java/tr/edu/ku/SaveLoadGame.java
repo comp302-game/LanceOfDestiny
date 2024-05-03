@@ -1,4 +1,4 @@
-package tr.edu.ku;
+package tr.edu.ku.Database;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,7 +50,7 @@ public class SaveLoadGame {
             PreparedStatement pStatement = connection.prepareStatement(query);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
-            Game sglh = new Game(gameArea.getSimpleBarriers(), gameArea.getReinforcedBarriers(), gameArea.getExplosiveBarriers(), gameArea.getPaddle(), gameArea.getBall(), gameArea.getScore(), gameArea.isGameOver(), gameArea.getLives());
+            Game sglh = new Game(gameArea.getSimpleBarriers(), gameArea.getReinforcedBarriers(), gameArea.getExplosiveBarriers(), gameArea.getRewardingBarriers(), gameArea.getPaddle(), gameArea.getBall(), gameArea.getScore(), gameArea.isGameOver(), gameArea.getLives(), gameArea.getHEX(), gameArea.getOFB(), gameArea.getMSE(), gameArea.getFELIX());
     
             oos.writeObject(sglh);
             oos.close();

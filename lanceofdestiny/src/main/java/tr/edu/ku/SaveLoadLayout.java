@@ -1,4 +1,4 @@
-package tr.edu.ku;
+package tr.edu.ku.Database;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -49,7 +49,7 @@ public class SaveLoadLayout {
             PreparedStatement pStatement = connection.prepareStatement(query);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
-            Layout layout = new Layout(editingArea.getSimpleBarriers(), editingArea.getReinforcedBarriers(), editingArea.getExplosiveBarriers());
+            Layout layout = new Layout(editingArea.getSimpleBarriers(), editingArea.getReinforcedBarriers(), editingArea.getExplosiveBarriers(), editingArea.getRewardingBarriers());
 
             oos.writeObject(layout);
             oos.close();
