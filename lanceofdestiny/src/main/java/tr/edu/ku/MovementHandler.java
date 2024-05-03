@@ -1,6 +1,15 @@
-package tr.edu.ku;
+package tr.edu.ku.GameEngine;
 
 import java.util.ArrayList;
+
+import tr.edu.ku.Constants;
+import tr.edu.ku.Domain.Barrier;
+import tr.edu.ku.Domain.Bullet;
+import tr.edu.ku.Domain.ExplosiveBarrier;
+import tr.edu.ku.Domain.FireBall;
+import tr.edu.ku.Domain.ReinforcedBarrier;
+import tr.edu.ku.Domain.RewardingBarrier;
+import tr.edu.ku.Domain.SimpleBarrier;
 
 public class MovementHandler {
 	private CollisionHandler collision;
@@ -246,6 +255,43 @@ public class MovementHandler {
 	}
 
 	
+	public void reflect(RewardingBarrier barrier, FireBall ball) {
+		//ONLY STATIC COLLISION WITH REWARDING BARRIER
+		double centerBallx= ball.getX() + (ball.getSize()/ 2);
+    	double centerBally= ball.getY() + (ball.getSize()/ 2);
+    	double centerBarrier_x= barrier.getX() + (barrier.getWidth() / 2);
+    	double centerBarrier_y= barrier.getY() + (barrier.getHeight() / 2);
+    	
+    	double dx = Math.abs(centerBallx-centerBarrier_x);
+    	double dy = Math.abs(centerBally-centerBarrier_y);
+    	
+    	if(dx == 0) {
+    		dx = (float) 0.001;
+    	}
+   	
+    	double slope = dy/dx;
+			
+        // Determine collision side based on ball's movement direction
+        if (slope > 0.72) {
+            // Collision from top and bottom
+            ball.setSpeedY(ball.getSpeedY() * -1); // Reverse vertical direction
+			
+        } 
+        
+        else if (slope < 0.72) {
+            // Collision from the sides
+            ball.setSpeedX(ball.getSpeedX() * -1); // Reverse horizontal direction
+        } 
+
+        else {
+            // Collision from top or bottom side
+            ball.setSpeedY(ball.getSpeedY() * -1); // Reverse vertical direction
+            ball.setSpeedX(ball.getSpeedX() * -1); // Reverse vertical direction
+        }
+
+	}
+
+
 	public void reflect(MagicalStaff staff, FireBall ball) {
 
 		double staffCenterX = staff.getX();
@@ -323,20 +369,38 @@ public class MovementHandler {
 	}
 
 
-
 	public void updateStaff(MagicalStaff staff) {
-		 if (KeyboardInputHandler.getLeftPressed() && staff.getX() > staff.getWidth()/2) {
+		if (KeyboardInputHandler.getLeftPressed() && staff.getX() > staff.getWidth()/2) {
 	        staff.setX(staff.getX() - staff.getSpeed());
 	        }
-	     if (KeyboardInputHandler.getRightPressed() && staff.getX() < Constants.GAMEPANEL_WIDTH- staff.getWidth()/2) {
+
+	    else if (KeyboardInputHandler.getRightPressed() && staff.getX() < Constants.GAMEPANEL_WIDTH- staff.getWidth()/2) {
 	    	 staff.setX(staff.getX() + staff.getSpeed());
 	        }
-		if (KeyboardInputHandler.getA_Pressed() && staff.getRotationAngle() < 45) {
-	    	 staff.setRotationAngle(staff.getRotationAngle() + staff.getRotationSpeed()); // Adjust rotation 
-	        }
+
 		if (KeyboardInputHandler.getD_Pressed() && staff.getRotationAngle() > -45) {
 	    	 staff.setRotationAngle(staff.getRotationAngle() - staff.getRotationSpeed()); // Adjust rotation 
 	        }
+
+		else if (KeyboardInputHandler.getA_Pressed() && staff.getRotationAngle() < 45) {
+	    	 staff.setRotationAngle(staff.getRotationAngle() + staff.getRotationSpeed()); // Adjust rotation 
+	        }
+
+		else {
+			if (staff.getRotationAngle() < 0) {
+				staff.setRotationAngle(staff.getRotationAngle() + Constants.STAFF_ROTATION_RETURN_SPEED);
+				if(staff.getRotationAngle() > -0.4) {
+					staff.setRotationAngle(0);
+				}
+			}
+
+			else if (staff.getRotationAngle() > 0) {
+				staff.setRotationAngle(staff.getRotationAngle() - Constants.STAFF_ROTATION_RETURN_SPEED);
+				if(staff.getRotationAngle() < 0.4) {
+					staff.setRotationAngle(0);
+				}
+			}
+		}
 	}
 	
 	
@@ -383,10 +447,16 @@ public class MovementHandler {
 	}
 
 	
-	public void updateBarriers(ArrayList<ReinforcedBarrier> reinforcedBarriers, ArrayList<SimpleBarrier> simpleBarriers, ArrayList<ExplosiveBarrier> explosiveBarriers) {
+	public void updateBarriers(ArrayList<ReinforcedBarrier> reinforcedBarriers, ArrayList<SimpleBarrier> simpleBarriers, ArrayList<ExplosiveBarrier> explosiveBarriers, ArrayList<RewardingBarrier> rewardingBarriers) {
 
-		setBarrierMovement(reinforcedBarriers, simpleBarriers, explosiveBarriers);
+		ArrayList<Barrier> allBarriers = new ArrayList<>();
+		allBarriers.addAll(simpleBarriers);
+		allBarriers.addAll(reinforcedBarriers);
+		allBarriers.addAll(explosiveBarriers);
+		allBarriers.addAll(rewardingBarriers);
+		setBarrierMovement(allBarriers);
 
+		
 		for(SimpleBarrier sBarrier : simpleBarriers) {  //Horizontal back and forth movement for simple dynamic barriers. 
 			if(sBarrier.isMoving){
 				sBarrier.setX(sBarrier.getX() + sBarrier.getSpeed());
@@ -431,102 +501,49 @@ public class MovementHandler {
 			
 		}
 
+
+		for(RewardingBarrier wBarrier : rewardingBarriers) {  //Update the falling pieces of the explosive barriers. 
+			if(wBarrier.isBroken()){
+				wBarrier.setY((int) (wBarrier.getY() + wBarrier.getSpeedY()));
+			}
+		}
+
 	} 
 
 
+	public void updateBullets(ArrayList<Bullet> bulletList) {
 
-	private void setBarrierMovement(ArrayList<ReinforcedBarrier> reinforcedBarriers, ArrayList<SimpleBarrier> simpleBarriers, ArrayList<ExplosiveBarrier> explosiveBarriers) { //Start moving the barriers if the space allows
-
-		for(SimpleBarrier sBarrier : simpleBarriers) {
-			if(sBarrier.isDynamic() && sBarrier.isMoving() == false){
-
-				boolean path_check = true;
-
-				for(SimpleBarrier barrier : simpleBarriers) {
-					if(sBarrier != barrier && sBarrier.getPath().intersects(barrier.getBounds())){
-						path_check = false;
-					}
+		if(bulletList != null) {
+			for(Bullet bullet: bulletList) {
+				bullet.setX(bullet.getX() + bullet.getSpeedX());
+				bullet.setY(bullet.getY() + bullet.getSpeedY());
 				}
-
-				for(ReinforcedBarrier rbarrier : reinforcedBarriers) {
-					if(sBarrier.getPath().intersects(rbarrier.getBounds())){
-						path_check = false;
-					}
-				}
-
-				for(ExplosiveBarrier ebarrier : explosiveBarriers) {
-					if(sBarrier.getPath().intersects(ebarrier.getBounds())){
-						path_check = false;
-					}
-				}
-
-				sBarrier.setIsMoving(path_check);
-
 			}
 		}
 
 
-		for(ReinforcedBarrier rBarrier : reinforcedBarriers) {
-			if(rBarrier.isDynamic() && rBarrier.isMoving() == false){
+
+	private void setBarrierMovement(ArrayList<Barrier> allBarriers) { //Start moving the barriers if the space allows
+
+		for(Barrier barrier : allBarriers) {
+			if(barrier.isDynamic() && barrier.isMoving() == false) {
 				
 				boolean path_check = true;
 
-				for(ReinforcedBarrier barrier : reinforcedBarriers) {
-					if(rBarrier != barrier && rBarrier.getPath().intersects(barrier.getBounds())){
+				for(Barrier barrier2 : allBarriers) {
+					if(barrier != barrier2 && barrier.getPath().intersects(barrier2.getBounds())){
 						path_check = false;
 					}
 				}
 
-				for(SimpleBarrier sbarrier : simpleBarriers) {
-					if(rBarrier.getPath().intersects(sbarrier.getBounds())){
-						path_check = false;
-					}
-				}
+				barrier.setIsMoving(path_check);
 
-				
-				for(ExplosiveBarrier ebarrier : explosiveBarriers) {
-					if(rBarrier.getPath().intersects(ebarrier.getBounds())){
-						path_check = false;
-					}
-				}
-
-
-				rBarrier.setIsMoving(path_check);
-			}
-			
-		}
-
-
-		for(ExplosiveBarrier eBarrier : explosiveBarriers) {
-			if(eBarrier.isDynamic() && eBarrier.isMoving() == false){
-				
-				boolean path_check = true;
-
-				for(ReinforcedBarrier barrier : reinforcedBarriers) {
-					if(eBarrier.getPath().intersects(barrier.getBounds())){
-						path_check = false;
-					}
-				}
-
-				for(SimpleBarrier sbarrier : simpleBarriers) {
-					if(eBarrier.getPath().intersects(sbarrier.getBounds())){
-						path_check = false;
-					}
-				}
-
-				
-				for(ExplosiveBarrier ebarrier : explosiveBarriers) {
-					if(eBarrier != ebarrier && eBarrier.getPath().intersects(ebarrier.getBounds())){
-						path_check = false;
-					}
-				}
-
-				eBarrier.setIsMoving(path_check);
-
-				if(path_check) {
+				if(path_check && barrier instanceof ExplosiveBarrier) {
+					ExplosiveBarrier eBarrier = (ExplosiveBarrier) barrier;
 					eBarrier.setOriginX((int) eBarrier.getX() + 16);
 					eBarrier.setOriginY((int) eBarrier.getY() + 10 - eBarrier.getRadius());
 				}
+
 			}
 		}
 	}
