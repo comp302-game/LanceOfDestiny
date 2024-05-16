@@ -18,7 +18,6 @@ public class Hex implements SpellAdapter {
     private long spellPausedTime;
     private double delta_t;
 
-
     public Hex(GameArea gameArea) {
         this.gameArea = gameArea;
         }

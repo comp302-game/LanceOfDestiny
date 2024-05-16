@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 import tr.edu.ku.Constants;
 
-
 public class MagicalStaff implements Serializable{
 
     private static final long serialVersionUID = 4L;

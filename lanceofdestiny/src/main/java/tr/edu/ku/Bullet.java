@@ -11,7 +11,6 @@ public class Bullet {
     private double speedX;
     private double speedY;
 
-
     public Bullet (Double x, Double y, Double speedX, Double speedY) {
         this.x = x;
         this.y = y;

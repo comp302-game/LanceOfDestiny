@@ -42,7 +42,6 @@ public class ExplosiveBarrier extends Barrier{
         return isExploded;
     }
     
-
     public ArrayList<Rectangle> getHitboxes() {
         ArrayList<Rectangle> pieces = new ArrayList<>();
         Rectangle piece1 = new Rectangle((int) this.getX(), (int) this.getY(), 9, 9);

@@ -9,7 +9,6 @@ public class FelixFelicis implements SpellAdapter {
     public FelixFelicis(GameArea gameArea) {
         this.gameArea = gameArea;
     }
-
     @Override
     public void activate(int time) {
         gameArea.setLives(gameArea.getLives() + 1);

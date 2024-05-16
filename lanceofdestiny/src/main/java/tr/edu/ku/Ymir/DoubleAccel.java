@@ -61,4 +61,5 @@ public class DoubleAccel implements SpellAdapter {
         activate((int) (30-delta_t));
         spellStartingTime = System.currentTimeMillis(); // Record the game starting time
     }
+    
 }

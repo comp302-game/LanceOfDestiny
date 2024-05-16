@@ -12,7 +12,6 @@ public class SimpleBarrier extends Barrier {
     
         // Create an instance of Random class
     	Random random = new Random();
-
     	// Generate a random number between 0 and 1
     	double randomNumber = random.nextDouble();
 

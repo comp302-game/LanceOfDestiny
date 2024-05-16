@@ -35,7 +35,6 @@ public class SpellController {
 		return instance;
 	}
 
-
     public void reset() {
         HEX_Active = false;
         OFB_Active = false;

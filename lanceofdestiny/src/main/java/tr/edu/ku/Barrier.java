@@ -8,7 +8,6 @@ import tr.edu.ku.Domain.BarrierStrategy.DynamicBehavior;
 
 //SUPERCLASS (Abstract) FOR ALL TYPES OF BARRIERS
 public abstract class Barrier implements Serializable {
-
 	private static final long serialVersionUID = 3L;
 
 	private double x;

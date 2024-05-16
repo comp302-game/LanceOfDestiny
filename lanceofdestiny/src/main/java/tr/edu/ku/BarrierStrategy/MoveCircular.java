@@ -6,6 +6,7 @@ import tr.edu.ku.Constants;
 import tr.edu.ku.Domain.Barrier;
 
 public class MoveCircular implements Serializable, DynamicBehavior{
+    
 
     private double speed = Constants.BARRIER_CIRCULAR_SPEED;
     private int radius = Constants.BARRIER_CIRCULAR_RADIUS;

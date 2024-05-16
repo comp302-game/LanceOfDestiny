@@ -24,7 +24,6 @@ public class SpellFactory {
 		return instance;
 	}
 
-
     public int createSpellIndex() {
 
 			int i = 0;

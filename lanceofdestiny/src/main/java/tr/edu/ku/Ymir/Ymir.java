@@ -6,7 +6,6 @@ import tr.edu.ku.Domain.Spell.SpellAdapter;
 import tr.edu.ku.GameArea.GameArea;
 
 public class Ymir {
-    
     private Random random = new Random();
 	private GameArea gameArea;
 

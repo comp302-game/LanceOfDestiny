@@ -52,4 +52,5 @@ public class HollowPurple implements SpellAdapter {
         //to timer task
     }
 
+    
 }

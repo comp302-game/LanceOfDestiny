@@ -22,7 +22,6 @@ public class MoveHorizontal implements DynamicBehavior, Serializable {
     }
 
 
-
 	public double getSpeed() {
 		return speed;
 	}

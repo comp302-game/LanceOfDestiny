@@ -7,4 +7,5 @@ public interface DynamicBehavior {
     public void move(Barrier barrier);
     public double getSpeed();
     public void setSpeed(double d);
+    
 } 

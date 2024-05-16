@@ -8,7 +8,7 @@ import tr.edu.ku.GameArea.GameArea;
 
 public class EnlargementSpell implements SpellAdapter {
 
- 
+
     private GameArea gameArea;
     private long spellStartingTime;
     private long spellPausedTime;

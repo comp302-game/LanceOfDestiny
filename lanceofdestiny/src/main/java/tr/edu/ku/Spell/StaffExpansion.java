@@ -35,7 +35,6 @@ public class StaffExpansion implements SpellAdapter {
             }
         }, time * 1000);
     }
-    
     @Override
     public void deactivate() {
         synchronized(gameArea.getLock()){

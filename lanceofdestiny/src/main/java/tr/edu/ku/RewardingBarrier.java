@@ -12,7 +12,6 @@ public class RewardingBarrier extends Barrier {
         super(x, y, width, height, r, c);
         this.setIsDynamic(false);
     }
-
     public void Break() {
         this.setDynamicBehavior(new MoveVertical());
         isBroken = true;

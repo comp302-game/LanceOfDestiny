@@ -68,6 +68,7 @@ public class InfiniteVoid implements SpellAdapter {
             }
         }
     }
+    
     }
 
 
