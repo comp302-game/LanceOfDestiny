@@ -1,4 +1,4 @@
-package tr.edu.ku;
+package tr.edu.ku.Domain;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -78,3 +78,5 @@ public class ExplosiveBarrier extends Barrier{
     }
 
 }
+
+

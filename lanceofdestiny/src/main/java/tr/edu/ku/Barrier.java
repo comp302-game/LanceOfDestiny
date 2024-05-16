@@ -1,21 +1,20 @@
-package tr.edu.ku;
+package tr.edu.ku.Domain;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Random;
+import java.io.Serializable;
 
 //SUPERCLASS FOR BARRIERS
-public class Barrier implements Cloneable{
+public class Barrier implements Serializable {
   protected double x;
   protected double y;
   protected int width;
   protected int height;
   protected boolean visible;
-  protected BufferedImage image;
   protected Boolean collideable;
   protected double speedX = 0.28; //Aprrox L/4 pixels /s
   protected boolean isDynamic;
-  protected boolean isMoving;
+  public boolean isMoving;
   protected double dx;
 
   public Barrier(int x, int y, int width, int height) {
@@ -35,7 +34,7 @@ public class Barrier implements Cloneable{
     double randomNumber = random.nextDouble();
 
  	// With %20 probability the barrier is dynamic
-    if (randomNumber < 0.2) {
+    if (randomNumber <= 0.2) {
 		isDynamic = true;
     }
 }
@@ -89,15 +88,6 @@ public class Barrier implements Cloneable{
         return new Rectangle((int) x, (int) y, width, height).intersects(rect);
     }
 
-	public BufferedImage getImage() {
-		return image;
-	}
-
-	@Override
-	 public Object clone() throws CloneNotSupportedException {
-	 return super.clone();
-	 }
-
 
 	public boolean getCollideable() {
 		return collideable;
@@ -135,8 +125,17 @@ public class Barrier implements Cloneable{
 		return dx;
 	}
 
+	public double getCenterX() {
+		return x + width/2;
+	}
+
+	public double getCenterY() {
+		return y + height/2;
+	}
+
 	public void setDx(double s) {
 		this.dx = s;
 	}
 
 }
+
