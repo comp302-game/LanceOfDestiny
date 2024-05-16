@@ -5,11 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import tr.edu.ku.Domain.Barrier;
-import tr.edu.ku.Domain.ExplosiveBarrier;
-import tr.edu.ku.Domain.ReinforcedBarrier;
-import tr.edu.ku.Domain.RewardingBarrier;
-import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.Domain.*;
 
 
 public class EditingArea {

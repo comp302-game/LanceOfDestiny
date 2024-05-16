@@ -2,7 +2,7 @@ package tr.edu.ku.GameArea;
 import java.io.Serializable;
 import java.util.*;
 
-import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.Domain.*;
 
 public class Game implements Serializable {
 

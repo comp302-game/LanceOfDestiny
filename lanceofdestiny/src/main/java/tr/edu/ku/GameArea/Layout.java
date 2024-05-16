@@ -2,7 +2,7 @@ package tr.edu.ku.GameArea;
 
 import java.util.ArrayList;
 
-import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.Domain.*;
 
 import java.io.Serializable;
 
