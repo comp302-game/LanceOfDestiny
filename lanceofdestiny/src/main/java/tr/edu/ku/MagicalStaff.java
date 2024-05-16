@@ -1,4 +1,4 @@
-package tr.edu.ku.Domain;
+package tr.edu.ku;
 
 import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
@@ -9,6 +9,9 @@ import tr.edu.ku.Constants;
 
 
 public class MagicalStaff implements Serializable{
+
+    private static final long serialVersionUID = 4L;
+
     private int WIDTH = Constants.STAFF_WIDTH; 
     private int HEIGHT = Constants.STAFF_HEIGHT;
     private double SPEED = Constants.STAFF_SPEED; 

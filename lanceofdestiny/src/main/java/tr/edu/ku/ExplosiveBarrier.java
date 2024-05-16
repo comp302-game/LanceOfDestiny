@@ -1,38 +1,47 @@
-package tr.edu.ku.Domain;
+package tr.edu.ku;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Random;
+
+import tr.edu.ku.Constants;
+import tr.edu.ku.BarrierStrategy.MoveCircular;
+import tr.edu.ku.BarrierStrategy.MoveVertical;
+
 
 
 public class ExplosiveBarrier extends Barrier{
 
     private boolean isExploded = false;
-    private double speedY = 0; //barrier at 0 speed initially
-    
-    private double angle = 270; //starting angle is 270 degrees
-    private int radius = 240;
 
-    private int originX;
-    private int originY;
+    public ExplosiveBarrier(int x, int y, int width, int height, int r, int c) {
+        super(x, y, width, height, r, c);
 
-    public ExplosiveBarrier(int x, int y, int width, int height) {
-        super(x, y, width, height);
-        speedX = 0.05;
+        // Create a Random object
+        Random random = new Random();
+
+        // Generate a random number between 0 and 1
+    	double randomNumber = random.nextDouble();
+
+ 		// With %20 probability the barrier is dynamic
+    	if (randomNumber <= 0.20) {
+            this.setIsDynamic(true);
+			dynamicBehavior = new MoveCircular(); //pass the origin of the circular movement
+    	}
+        else {
+            this.setIsDynamic(false);
+        }
     }
 
     public void explode() {
+        dynamicBehavior = new MoveVertical();
         isExploded = true;
-        speedY = 2;
     }
 
     public boolean isExploded() {
         return isExploded;
     }
     
-    public double getSpeedY() {
-        return speedY;
-    }
-
 
     public ArrayList<Rectangle> getHitboxes() {
         ArrayList<Rectangle> pieces = new ArrayList<>();
@@ -46,37 +55,7 @@ public class ExplosiveBarrier extends Barrier{
     }
 
     public Rectangle getPath() {
-        return new Rectangle((int) (this.getX() - 224), (int) (this.getY()- 2*radius + 10), 480, 480);
-    }
-
-    public double getAngle() {
-        return angle;
-    }
-
-    public int getOriginX() {
-        return originX;
-    }
-
-    public int getOriginY() {
-        return originY;
-    }
-
-    public void setAngle(double a) {
-        this.angle = a;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setOriginX(int x) {
-        this.originX = x;
-    }
-
-    public void setOriginY(int y) {
-        this.originY = y;
+        return new Rectangle((int) (this.getX() - 224), (int) (this.getY()- 2*Constants.BARRIER_CIRCULAR_RADIUS + 10), 480, 480);
     }
 
 }
-
-

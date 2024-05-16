@@ -1,4 +1,4 @@
-package tr.edu.ku.Domain;
+package tr.edu.ku;
 
 import java.awt.Rectangle;
 import tr.edu.ku.Constants;
@@ -12,9 +12,7 @@ public class Bullet {
     private double speedY;
 
 
-
     public Bullet (Double x, Double y, Double speedX, Double speedY) {
-
         this.x = x;
         this.y = y;
         this.speedX = speedX;
@@ -30,6 +28,9 @@ public class Bullet {
 	public Rectangle getBounds() {
 		return new Rectangle((int) x, (int) y, size, size);
 	}
+
+
+
 
 
 //GETTER SETTER

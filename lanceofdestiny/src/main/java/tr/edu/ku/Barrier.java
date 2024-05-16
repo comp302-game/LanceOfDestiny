@@ -1,56 +1,66 @@
-package tr.edu.ku.Domain;
+package tr.edu.ku;
 
-import java.awt.*;
-import java.util.Random;
+import java.awt.Rectangle;
 import java.io.Serializable;
 
-//SUPERCLASS FOR BARRIERS
-public class Barrier implements Serializable {
-  protected double x;
-  protected double y;
-  protected int width;
-  protected int height;
-  protected boolean visible;
-  protected Boolean collideable;
-  protected double speedX = 0.28; //Aprrox L/4 pixels /s
-  protected boolean isDynamic;
-  public boolean isMoving;
-  protected double dx;
-
-  public Barrier(int x, int y, int width, int height) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.visible = true;
-	this.collideable = true;
-	this.dx = 0.0;
-	this.isMoving = false;
-
-	// Create an instance of Random class
-    Random random = new Random();
-
-    // Generate a random number between 0 and 1
-    double randomNumber = random.nextDouble();
-
- 	// With %20 probability the barrier is dynamic
-    if (randomNumber <= 0.2) {
-		isDynamic = true;
-    }
-}
+import tr.edu.ku.Domain.BarrierStrategy.DynamicBehavior;
 
 
-  public Rectangle getBounds() {
-      return new Rectangle((int) x, (int) y, width, height);
-  }
+//SUPERCLASS (Abstract) FOR ALL TYPES OF BARRIERS
+public abstract class Barrier implements Serializable {
 
-  public boolean isVisible() {
-      return visible;
-  }
+	private static final long serialVersionUID = 3L;
 
-  public void setVisible(boolean visible) {
-      this.visible = visible;
-  }
+	private double x;
+  	private double y;
+  	private int width;
+  	private int height;
+  	private boolean visible;
+  	private Boolean collideable;
+  	private boolean isMoving;
+	private boolean isDynamic;
+	private int grid_row;
+	private int grid_column;
+	private boolean is_frozen;
+
+	//Strategy Pattern
+	DynamicBehavior dynamicBehavior;
+
+
+  	public Barrier(int x, int y, int width, int height, int row, int column) {
+    	this.x = x;
+    	this.y = y;
+    	this.width = width;
+    	this.height = height;
+    	this.visible = true;
+		this.collideable = true;
+		this.isMoving = false;
+		this.grid_row = row;
+		this.grid_column = column;
+		this.is_frozen=false;
+	}
+
+
+	//Only calling this function is enough to control all barrier movements - Strategy Pattern
+	public void MoveBarrier() {
+		if(dynamicBehavior != null){
+			dynamicBehavior.move(this);
+		}
+	}
+
+
+//GETTER SETTER
+  	public Rectangle getBounds() {
+      	return new Rectangle((int) x, (int) y, width, height);
+  	}
+
+  	public boolean isVisible() {
+      	return visible;
+  	}
+
+  	public void setVisible(boolean visible) {
+      	this.visible = visible;
+  	}
 
 	public double getX() {
 		return x;
@@ -88,7 +98,6 @@ public class Barrier implements Serializable {
         return new Rectangle((int) x, (int) y, width, height).intersects(rect);
     }
 
-
 	public boolean getCollideable() {
 		return collideable;
 	}
@@ -97,32 +106,8 @@ public class Barrier implements Serializable {
 		this.collideable = b;
 	}
 
-	public boolean isDynamic() {
-		return isDynamic;
-	}
-
-	public boolean isMoving() {
-		return isMoving;
-	}
-
 	public Rectangle getPath() {
-		return new Rectangle((int) x-32, (int) y, 96, 20);
-	}
-
-	public void setIsMoving(boolean b) {
-		this.isMoving = b;
-	}
-
-	public double getSpeed() {
-		return speedX;
-	}
-
-	public void setSpeed(double s) {
-		this.speedX = s;
-	}
-
-	public double get_dx() {
-		return dx;
+		return new Rectangle((int) x-40, (int) y, 112, 20);
 	}
 
 	public double getCenterX() {
@@ -133,9 +118,52 @@ public class Barrier implements Serializable {
 		return y + height/2;
 	}
 
-	public void setDx(double s) {
-		this.dx = s;
+	public DynamicBehavior getDynamicBehavior() {
+		return dynamicBehavior;
 	}
 
-}
+	public void setDynamicBehavior(DynamicBehavior db) {
+		this.dynamicBehavior = db;
+	}
 
+	public boolean isMoving() {
+		return isMoving;
+	}
+
+	public void setIsMoving(boolean b) {
+		this.isMoving = b;
+	}
+
+	public boolean isDynamic() {
+		return isDynamic;
+	}
+
+	public void setIsDynamic(boolean b) {
+		this.isDynamic = b;
+	}
+
+	public boolean isFrozen() {
+		return is_frozen;
+	}
+
+	public void setIsFrozen(boolean b) {
+		this.is_frozen = b;
+	}
+
+
+	public int getRow() {
+		return grid_row;
+	}
+
+	public int getColumn() {
+		return grid_column;
+	}
+
+	public void setRow(int r) {
+		this.grid_row = r;
+	}
+
+	public void setColumn(int c) {
+		this.grid_column = c;
+	}
+}

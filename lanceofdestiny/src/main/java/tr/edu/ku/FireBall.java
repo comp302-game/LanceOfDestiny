@@ -1,11 +1,14 @@
-package tr.edu.ku.Domain;
+package tr.edu.ku;
 
 import java.awt.Rectangle;
 import java.io.Serializable;
 
 import tr.edu.ku.Constants;
 
+
 public class FireBall implements Serializable {
+
+	private static final long serialVersionUID = 5L;
 
     private double x;
     private double y;
