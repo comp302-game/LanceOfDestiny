@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import tr.edu.ku.GameArea.GameArea;
-import tr.edu.ku.GameArea.GameArea.Game;
+import tr.edu.ku.GameArea.Game;
 import tr.edu.ku.Main.Player;
 
 public class SaveLoadGame {
