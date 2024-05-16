@@ -1,6 +1,10 @@
-package tr.edu.ku.Domain;
+package tr.edu.ku;
 
 import java.awt.Rectangle;
+<<<<<<< HEAD
+
+=======
+>>>>>>> 5c2b1e4f8aacb3f6315d2ec324c4c76f17bcf71d
 import tr.edu.ku.Constants;
 
 public class Bullet {
@@ -11,10 +15,15 @@ public class Bullet {
     private double speedX;
     private double speedY;
 
+<<<<<<< HEAD
+=======
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> 5c2b1e4f8aacb3f6315d2ec324c4c76f17bcf71d
+>>>>>>> origin/Domain
     public Bullet (Double x, Double y, Double speedX, Double speedY) {
-
         this.x = x;
         this.y = y;
         this.speedX = speedX;
@@ -30,6 +39,9 @@ public class Bullet {
 	public Rectangle getBounds() {
 		return new Rectangle((int) x, (int) y, size, size);
 	}
+
+
+
 
 
 //GETTER SETTER
