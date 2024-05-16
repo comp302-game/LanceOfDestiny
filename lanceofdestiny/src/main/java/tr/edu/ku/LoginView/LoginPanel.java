@@ -1,6 +1,12 @@
-package tr.edu.ku;
+package tr.edu.ku.LoginView;
 
 import javax.swing.*;
+
+import tr.edu.ku.Constants;
+import tr.edu.ku.Database.LoginRegisterHandler;
+import tr.edu.ku.Main.MainApplication;
+import tr.edu.ku.Main.Player;
+
 import java.awt.*;
 import java.awt.event.*;
 

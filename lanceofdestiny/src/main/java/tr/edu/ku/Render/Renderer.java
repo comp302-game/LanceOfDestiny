@@ -1,6 +1,9 @@
-package tr.edu.ku;
+package tr.edu.ku.Render;
 
 import java.awt.*;
+
+import tr.edu.ku.Constants;
+import tr.edu.ku.Domain.SimpleBarrier;
 
 class Renderer {
 

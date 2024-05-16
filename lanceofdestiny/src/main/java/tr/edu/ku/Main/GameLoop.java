@@ -1,4 +1,6 @@
-package tr.edu.ku;
+package tr.edu.ku.Main;
+
+import tr.edu.ku.GameView.GamePanel;
 
 public class GameLoop implements Runnable {
 

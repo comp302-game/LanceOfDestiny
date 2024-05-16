@@ -1,4 +1,4 @@
-package tr.edu.ku;
+package tr.edu.ku.Database;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,6 +9,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+
+import tr.edu.ku.GameArea.GameArea;
+import tr.edu.ku.GameArea.GameArea.Game;
+import tr.edu.ku.Main.Player;
 
 public class SaveLoadGame {
     Player player;

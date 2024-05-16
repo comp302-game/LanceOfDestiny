@@ -1,6 +1,9 @@
-package tr.edu.ku;
+package tr.edu.ku.GameArea;
 
 import java.util.ArrayList;
+
+import tr.edu.ku.Domain.SimpleBarrier;
+
 import java.io.Serializable;
 
 public class Layout implements Serializable{

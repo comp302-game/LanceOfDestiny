@@ -5,7 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import tr.edu.ku.Constants;
-import tr.edu.ku.SpellController;
+import tr.edu.ku.Domain.Bullet;
 
 public class Hex extends Spell {
 

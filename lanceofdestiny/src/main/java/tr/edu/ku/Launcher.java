@@ -1,5 +1,8 @@
 package tr.edu.ku;
 
+import tr.edu.ku.Database.DatabaseConnection;
+import tr.edu.ku.LoginView.LoginFrame;
+
 public class Launcher {
 
     public static void main(String[] args) {

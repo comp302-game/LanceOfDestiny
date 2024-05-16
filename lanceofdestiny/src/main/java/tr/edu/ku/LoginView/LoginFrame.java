@@ -1,6 +1,7 @@
-package tr.edu.ku;
+package tr.edu.ku.LoginView;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 public class LoginFrame extends JFrame {

@@ -1,6 +1,12 @@
-package tr.edu.ku;
+package tr.edu.ku.GameView;
 
 import javax.swing.*;
+
+import tr.edu.ku.Database.SaveLoadGame;
+import tr.edu.ku.GameArea.Layout;
+import tr.edu.ku.GameArea.GameArea.Game;
+import tr.edu.ku.Main.MainApplication;
+
 import java.awt.*;
 import java.awt.event.*;
 

@@ -1,4 +1,4 @@
-package tr.edu.ku;
+package tr.edu.ku.Main;
 
 
 public class Player {

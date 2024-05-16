@@ -4,7 +4,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import tr.edu.ku.Constants;
-import tr.edu.ku.SpellController;
+import tr.edu.ku.Domain.Spell;
+import tr.edu.ku.Domain.SpellController;
 
 public class StaffExpansion extends Spell {
 

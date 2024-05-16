@@ -1,4 +1,9 @@
-package tr.edu.ku;
+package tr.edu.ku.Main;
+
+import tr.edu.ku.AppInterface.ModeSwitchListener;
+import tr.edu.ku.GameArea.Layout;
+import tr.edu.ku.GameView.LanceOfDestiny;
+import tr.edu.ku.GameView.RunningFrame;
 
 public class MainApplication implements ModeSwitchListener {
     

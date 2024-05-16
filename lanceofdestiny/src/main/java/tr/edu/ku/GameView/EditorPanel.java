@@ -23,7 +23,7 @@ import tr.edu.ku.Domain.ExplosiveBarrier;
 import tr.edu.ku.Domain.ReinforcedBarrier;
 import tr.edu.ku.Domain.RewardingBarrier;
 import tr.edu.ku.Domain.SimpleBarrier;
-import tr.edu.ku.GameArea.EditingArea;
+import tr.edu.ku.GameArea.GameArea.EditingArea;
 import tr.edu.ku.Render.Renderer;
 
 

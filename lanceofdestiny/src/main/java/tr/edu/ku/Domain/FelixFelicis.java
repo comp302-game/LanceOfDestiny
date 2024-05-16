@@ -1,6 +1,6 @@
 package tr.edu.ku.Domain;
 
-import tr.edu.ku.GameArea.GameArea;
+import tr.edu.ku.GameArea.GameArea.GameArea;
 
 public class FelixFelicis extends Spell {
 

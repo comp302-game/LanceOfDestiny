@@ -1,8 +1,15 @@
-package tr.edu.ku;
+package tr.edu.ku.GameEngine;
 
 import java.util.ArrayList;
 import java.awt.*;
 import java.util.Iterator;
+
+import tr.edu.ku.Domain.Barrier;
+import tr.edu.ku.Domain.ExplosiveBarrier;
+import tr.edu.ku.Domain.FireBall;
+import tr.edu.ku.Domain.MagicalStaff;
+import tr.edu.ku.Domain.ReinforcedBarrier;
+import tr.edu.ku.Domain.SimpleBarrier;
 
 public class CollisionHandler {
 

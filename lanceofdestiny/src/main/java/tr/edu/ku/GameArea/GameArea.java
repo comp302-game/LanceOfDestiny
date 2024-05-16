@@ -1,8 +1,15 @@
-package tr.edu.ku;
+package tr.edu.ku.GameArea;
 
 import java.util.ArrayList;
 
 import javax.swing.*;
+
+import tr.edu.ku.Constants;
+import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.GameArea.GameArea.Game;
+import tr.edu.ku.GameEngine.CollisionHandler;
+import tr.edu.ku.GameEngine.KeyboardInputHandler;
+import tr.edu.ku.GameEngine.MovementHandler;
 
 public class GameArea extends JPanel {
 	

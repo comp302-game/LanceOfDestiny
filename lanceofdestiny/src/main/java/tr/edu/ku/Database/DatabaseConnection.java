@@ -1,4 +1,4 @@
-package tr.edu.ku;
+package tr.edu.ku.Database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
