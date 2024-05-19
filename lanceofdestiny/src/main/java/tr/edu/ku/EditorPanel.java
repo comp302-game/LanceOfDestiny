@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import tr.edu.ku.Constants;
+import tr.edu.ku.MathBase;
 import tr.edu.ku.Database.SaveLoadLayout;
 import tr.edu.ku.Domain.Barrier;
 import tr.edu.ku.Domain.ExplosiveBarrier;
@@ -24,6 +25,7 @@ import tr.edu.ku.Domain.ReinforcedBarrier;
 import tr.edu.ku.Domain.RewardingBarrier;
 import tr.edu.ku.Domain.SimpleBarrier;
 import tr.edu.ku.GameArea.EditingArea;
+import tr.edu.ku.GameArea.GridCell;
 import tr.edu.ku.Render.Renderer;
 
 
@@ -37,9 +39,10 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
     private Rectangle explosiveLabel = new Rectangle(1605, 120, 32, 20);
     private Rectangle rewardingLabel = new Rectangle(1605, 170, 32, 20);
 
-    private Rectangle boundary = new Rectangle(0, 40, 1600, 610); //Allowable barrier placement area
+    private Rectangle boundary = new Rectangle(0, 40, 1600, 600); //Allowable barrier placement area
 
     private Barrier selectedBarrier;
+    private GridCell previousCell;
     
     private Point initialClick;
     private boolean isDragging = false;
@@ -82,9 +85,9 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         
         // Draw dashed lines
         int startX = 0;
-        int startY = 650;
+        int startY = 640;
         int endX = 1600;
-        int endY = 650;
+        int endY = 640;
         g2d.drawLine(startX, startY, endX, endY);
 
         startX = 0;
@@ -96,10 +99,10 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         //Display the numbers of barriers placed
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 18)); // Font name, style, size
-        g.drawString(""+editingArea.getSimpleBarriers().size(), 1645, 35);
-        g.drawString(""+editingArea.getReinforcedBarriers().size(), 1645, 85);
-        g.drawString(""+editingArea.getExplosiveBarriers().size(), 1645, 135);
-        g.drawString(""+editingArea.getRewardingBarriers().size(), 1645, 185);
+        g.drawString(""+editingArea.getSimpleNum(), 1645, 35);
+        g.drawString(""+editingArea.getReinforcedNum(), 1645, 85);
+        g.drawString(""+editingArea.getExplosiveNum(), 1645, 135);
+        g.drawString(""+editingArea.getRewardingNum(), 1645, 185);
 
         renderer.renderEditing((Graphics2D) g, editingArea);
         }
@@ -145,7 +148,7 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
     public void mousePressed(MouseEvent e) {
         //Check if labels are clicked
         if (simpleLabel.contains(e.getPoint()))  {
-            SimpleBarrier newSBarrier = new SimpleBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT);
+            SimpleBarrier newSBarrier = new SimpleBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT, 0,0);
             selectedBarrier = newSBarrier;
             initialClick = e.getPoint();
             isDragging = true;
@@ -153,7 +156,7 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         }
 
         else if (reinforcedLabel.contains(e.getPoint()))  {
-            ReinforcedBarrier newRBarrier = new ReinforcedBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT);
+            ReinforcedBarrier newRBarrier = new ReinforcedBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT, 0,0);
             selectedBarrier = newRBarrier;
             initialClick = e.getPoint();
             isDragging = true;
@@ -161,7 +164,7 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         }
 
         else if (explosiveLabel.contains(e.getPoint()))  {
-            ExplosiveBarrier newEBarrier = new ExplosiveBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT);
+            ExplosiveBarrier newEBarrier = new ExplosiveBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT, 0,0);
             selectedBarrier = newEBarrier;
             initialClick = e.getPoint();
             isDragging = true;
@@ -169,7 +172,7 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
         }
 
         else if (rewardingLabel.contains(e.getPoint()))  {
-            RewardingBarrier newRBarrier = new RewardingBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT);
+            RewardingBarrier newRBarrier = new RewardingBarrier((int) e.getPoint().getX(), (int) e.getPoint().getY(), Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT, 0,0);
             selectedBarrier = newRBarrier;
             initialClick = e.getPoint();
             isDragging = true;
@@ -179,110 +182,92 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
 
         //Check if already existing barriers are clicked
         else {
-            for(SimpleBarrier sbarrier : editingArea.getSimpleBarriers()){
-                if(sbarrier.getBounds().contains(e.getPoint())){
-                    selectedBarrier = sbarrier;
-                    initialClick = e.getPoint();
-                    isDragging = true;
-                    isEditing = true;
-                    prev_x = sbarrier.getX();
-                    prev_y = sbarrier.getY();
-                }
-            }
-
-            for(ReinforcedBarrier rbarrier : editingArea.getReinforcedBarriers()){
-                if(rbarrier.getBounds().contains(e.getPoint())){
-                    selectedBarrier = rbarrier;
-                    initialClick = e.getPoint();
-                    isDragging = true;
-                    isEditing = true;
-                    prev_x = rbarrier.getX();
-                    prev_y = rbarrier.getY();
-                }
-            }
-
-            for(ExplosiveBarrier eBarrier : editingArea.getExplosiveBarriers()){
-                if(eBarrier.getBounds().contains(e.getPoint())){
-                    selectedBarrier = eBarrier;
-                    initialClick = e.getPoint();
-                    isDragging = true;
-                    isEditing = true;
-                    prev_x = eBarrier.getX();
-                    prev_y = eBarrier.getY();
-                }
-            }
-
-
-            for(RewardingBarrier wBarrier : editingArea.getRewardingBarriers()){
-                if(wBarrier.getBounds().contains(e.getPoint())){
-                    selectedBarrier = wBarrier;
-                    initialClick = e.getPoint();
-                    isDragging = true;
-                    isEditing = true;
-                    prev_x = wBarrier.getX();
-                    prev_y = wBarrier.getY();
+            for (int i = 0; i < Constants.ROW_NUMBER; i++) {
+                for (int j = 0; j < Constants.COLUMN_NUMBER; j++) {
+                    if(editingArea.getGrid().getCells()[i][j].hasBarrier()){
+                        if(editingArea.getGrid().getCells()[i][j].getBarrier().getBounds().contains(e.getPoint())) {
+                            previousCell = editingArea.getGrid().getCells()[i][j];
+                            selectedBarrier = editingArea.getGrid().getCells()[i][j].getBarrier();
+                            initialClick = e.getPoint();
+                            isDragging = true;
+                            isEditing = true;
+                            prev_x = editingArea.getGrid().getCells()[i][j].getBarrier().getX();
+                            prev_y = editingArea.getGrid().getCells()[i][j].getBarrier().getY();
+                        }
+                    }                
                 }
             }
         }
     }
 
 
+
     @Override
     public void mouseReleased(MouseEvent arg0) {
 
         if (selectedBarrier != null){
-        isDragging = false;
+            isDragging = false;
+            Point p = MathBase.getGrid(selectedBarrier); //Grid position of selected barrier
     
-        if(boundary.contains(selectedBarrier.getBounds()) && isEditing == false) {
+            if(boundary.contains(selectedBarrier.getBounds()) && isEditing == false) {
 
-             try {
-                editingArea.checkValidPlacement(selectedBarrier);
+                try {
+                    editingArea.checkValidPlacement(selectedBarrier);
 
-                if (selectedBarrier instanceof SimpleBarrier) {
-                    editingArea.getSimpleBarriers().add((SimpleBarrier) selectedBarrier);
+                    if (selectedBarrier instanceof SimpleBarrier) {
+                        editingArea.getGrid().setBarrier((int) p.getX(), (int) p.getY(), 0);
+                        editingArea.setSimpleNum(editingArea.getSimpleNum()+1);
+                    }
+
+                    else if (selectedBarrier instanceof ReinforcedBarrier) {
+                        editingArea.getGrid().setBarrier((int) p.getX(), (int) p.getY(), 1);
+                        editingArea.setReinforcedNum(editingArea.getReinforcedNum()+1);
+                    }
+
+                    else if (selectedBarrier instanceof ExplosiveBarrier) {
+                        editingArea.getGrid().setBarrier((int) p.getX(), (int) p.getY(), 2);
+                        editingArea.setExplosiveNum(editingArea.getExplosiveNum()+1);
+                    }
+
+                    else if (selectedBarrier instanceof RewardingBarrier) {
+                        editingArea.getGrid().setBarrier((int) p.getX(), (int) p.getY(), 3);
+                        editingArea.setRewardingNum(editingArea.getRewardingNum()+1);
+                    }
+
+                } catch (Exception e) {
+                    System.out.println("Invalid action: "+e.getMessage());
                 }
-
-                else if (selectedBarrier instanceof ReinforcedBarrier) {
-                    editingArea.getReinforcedBarriers().add((ReinforcedBarrier) selectedBarrier);
-                }
-
-                else if (selectedBarrier instanceof ExplosiveBarrier) {
-                    editingArea.getExplosiveBarriers().add((ExplosiveBarrier) selectedBarrier);
-                }
-
-                else if (selectedBarrier instanceof RewardingBarrier) {
-                    editingArea.getRewardingBarriers().add((RewardingBarrier) selectedBarrier);
-                }
-
-            } catch (Exception e) {
-                System.out.println("Invalid action: "+e.getMessage());
             }
-        }
 
-        else if(boundary.contains(selectedBarrier.getBounds()) == false && isEditing == false) {
-            selectedBarrier.setVisible(false);
-        }
+            else if(boundary.contains(selectedBarrier.getBounds()) == false && isEditing == false) {
+                selectedBarrier.setVisible(false);
+            }
     
         
-        else if(boundary.contains(selectedBarrier.getBounds()) && isEditing) {
+            else if(boundary.contains(selectedBarrier.getBounds()) && isEditing) {
             
-            try {
-                editingArea.checkValidPlacement(selectedBarrier);
-            } catch (Exception e) {
-                System.out.println("Invalid action: "+e.getMessage());
-                selectedBarrier.setX(prev_x);
-                selectedBarrier.setY(prev_y); 
+                try {
+                    editingArea.checkValidPlacement(selectedBarrier);    
+                    editingArea.getGrid().getCells()[(int) p.getX()][(int) p.getY()].setBarrier(selectedBarrier);
+                    previousCell.deleteBarrier();
+
+                } catch (Exception e) {
+                    System.out.println("Invalid action: "+e.getMessage());
+                    selectedBarrier.setX(prev_x);
+                    selectedBarrier.setY(prev_y); 
+                }
             }
-        }
 
 
-        else if(boundary.contains(selectedBarrier.getBounds()) == false && isEditing) {
-            selectedBarrier.setX(prev_x);
-            selectedBarrier.setY(prev_y);  
-        }
+            else if(boundary.contains(selectedBarrier.getBounds()) == false && isEditing) {
+                selectedBarrier.setX(prev_x);
+                selectedBarrier.setY(prev_y);  
+            }
 
-        selectedBarrier = null;
-        isEditing = false;
+
+            previousCell = null;
+            selectedBarrier = null;
+            isEditing = false;
         }
     }
 
