@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: GameLoadTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 1, Errors: 2, Skipped: 0, Time elapsed: 0.49 s <<< FAILURE! - in GameLoadTest
+GameLoadTest.testExistingGameDatabase  Time elapsed: 0.361 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "java.sql.Connection.prepareStatement(String)" because "this.connection" is null
+	at GameLoadTest.testExistingGameDatabase(GameLoadTest.java:47)
+
+GameLoadTest.testNonExistingGameDatabase  Time elapsed: 0.028 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "java.sql.Connection.prepareStatement(String)" because "this.connection" is null
+	at GameLoadTest.testNonExistingGameDatabase(GameLoadTest.java:89)
+
+GameLoadTest.testConnectionDatabase  Time elapsed: 0.022 s  <<< FAILURE!
+java.lang.AssertionError
+	at GameLoadTest.testConnectionDatabase(GameLoadTest.java:41)
+
