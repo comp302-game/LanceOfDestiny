@@ -18,7 +18,7 @@ public class MagicalStaffTest {
         // Assumes default position is the center bottom of the game panel
         assertTrue("Default position test", polygonContains(polygon, Constants.GAMEPANEL_WIDTH / 2, Constants.GAMEPANEL_HEIGHT - 40));
     }
-
+    
     @Test
     public void testRotation() {
         MagicalStaff staff = new MagicalStaff();
