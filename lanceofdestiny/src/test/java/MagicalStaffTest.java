@@ -10,7 +10,6 @@ import tr.edu.ku.Constants;
 import tr.edu.ku.Domain.MagicalStaff;
 
 public class MagicalStaffTest {
-
     @Test
     public void testDefaultPosition() {
         MagicalStaff staff = new MagicalStaff();
@@ -18,7 +17,7 @@ public class MagicalStaffTest {
         // Assumes default position is the center bottom of the game panel
         assertTrue("Default position test", polygonContains(polygon, Constants.GAMEPANEL_WIDTH / 2, Constants.GAMEPANEL_HEIGHT - 40));
     }
-    
+
     @Test
     public void testRotation() {
         MagicalStaff staff = new MagicalStaff();
