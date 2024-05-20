@@ -240,6 +240,9 @@ public class MovementHandler {
 	
 	
 	public int updateFireBall(FireBall ball) {
+		// Requires: non-null ball
+		// Modifies ball
+		// Effects: If ball hits and destroys a barrier returns 2, if the ball falls below Constants.GAMEPANEL_HEIGHT the method returns 1 and sets KeyboardInputHandler.X_Pressed to false, else it returns 0
 
 		int fireball_status = 0; //0 for no incident, 1 for fall below, 2 for successfuly acquiring points
 		
@@ -273,11 +276,20 @@ public class MovementHandler {
 	
 		if (ball.getX() <= 0 || ball.getX() >= Constants.GAMEPANEL_WIDTH - ball.getSize()) {
 			ball.setSpeedX(ball.getSpeedX()* -1);
+			if (ball.getX() < 0){
+				ball.setX(-ball.getX());
+			}
+
+			if (ball.getX() > Constants.GAMEPANEL_WIDTH - ball.getSize()){
+				ball.setX(Constants.GAMEPANEL_WIDTH - ball.getSize() - (ball.getX() - (Constants.GAMEPANEL_WIDTH - ball.getSize())));
+			}
 
 		}
 		if (ball.getY() <= 0) {
 			ball.setSpeedY(ball.getSpeedY()* -1);
-
+			if (ball.getY() < 0){
+				ball.setY(-ball.getY());
+			}
 		}
 	}
 
