@@ -1,8 +1,28 @@
-package tr.edu.ku;
+package tr.edu.ku.View.GameView;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+
+import tr.edu.ku.Constants;
+import tr.edu.ku.Database.SaveLoadLayout;
+import tr.edu.ku.GameArea.Grid;
+import tr.edu.ku.Main.MainApplication;
 
 
 public class LanceOfDestiny extends JFrame  {
@@ -10,7 +30,6 @@ public class LanceOfDestiny extends JFrame  {
     private MainApplication mainApp;
     private EditorPanel editorPanel;
     private SaveLoadLayout layout_manager;
-
 
     public LanceOfDestiny (MainApplication main) {
 
@@ -21,6 +40,10 @@ public class LanceOfDestiny extends JFrame  {
         getContentPane().setLayout(new BorderLayout(0, 0));
         setResizable(false);
 
+        //Exit Button
+        JButton exit = new JButton("MAIN MENU");
+        exit.setPreferredSize(new Dimension(110, 25));
+		exit.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 14));
 
         //Play Layout Button
         JButton playLayout = new JButton("LAYOUTS");
@@ -38,17 +61,21 @@ public class LanceOfDestiny extends JFrame  {
 		createLayout.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 14));
 
         //Create icons for barriers
-        ImageIcon bIcon = new ImageIcon(Constants.bluegem); // Change the path to your image file
+        ImageIcon bIcon = new ImageIcon(Constants.bluegem);
         JLabel blueLabel = new JLabel(bIcon);
         blueLabel.setPreferredSize(new Dimension(100, 25));
 
-        ImageIcon rIcon = new ImageIcon(Constants.firm); // Change the path to your image file
+        ImageIcon rIcon = new ImageIcon(Constants.firm);
         JLabel rLabel = new JLabel(rIcon);
         rLabel.setPreferredSize(new Dimension(100, 25));
 
-        ImageIcon eIcon = new ImageIcon(Constants.redgem); // Change the path to your image file
+        ImageIcon eIcon = new ImageIcon(Constants.redgem); 
         JLabel eLabel = new JLabel(eIcon);
         eLabel.setPreferredSize(new Dimension(100, 25));
+
+        ImageIcon wIcon = new ImageIcon(Constants.greengem); 
+        JLabel wLabel = new JLabel(wIcon);
+        wLabel.setPreferredSize(new Dimension(100, 25));
 
         //Create text box for barrier numbers
         JTextField simpleField = new JTextField();
@@ -62,6 +89,10 @@ public class LanceOfDestiny extends JFrame  {
         JTextField explosiveField = new JTextField();
         explosiveField.setPreferredSize(new Dimension(70, 25));
 
+        //Create text box for barrier numbers
+        JTextField rewardingField = new JTextField();
+        rewardingField.setPreferredSize(new Dimension(70, 25));
+
         //Empty JLabel for allignment
         JLabel emptyLabel = new JLabel();
         emptyLabel.setPreferredSize(new Dimension(60, 25));
@@ -70,6 +101,8 @@ public class LanceOfDestiny extends JFrame  {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Right-aligned FlowLayout
         buttonPanel.setBackground(new Color(74, 179, 217));
 
+        buttonPanel.add(wLabel);
+        buttonPanel.add(rewardingField);
         buttonPanel.add(eLabel);
         buttonPanel.add(explosiveField);
         buttonPanel.add(rLabel);
@@ -79,6 +112,7 @@ public class LanceOfDestiny extends JFrame  {
         buttonPanel.add(createLayout);
         buttonPanel.add(playLayout);
         buttonPanel.add(saveLayoutButton);
+        buttonPanel.add(exit);
         buttonPanel.add(emptyLabel);
 
         getContentPane().add(buttonPanel, BorderLayout.SOUTH); //Add control panel to the frame
@@ -86,6 +120,16 @@ public class LanceOfDestiny extends JFrame  {
         editorPanel = new EditorPanel();
         editorPanel.setBackground(new Color(74, 179, 217));
         getContentPane().add(editorPanel, BorderLayout.CENTER); //Add editor panel to the frame
+
+
+        //Button functionalities
+        exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                mainApp.exitGame();
+            }
+        });
 
 
         //Button functionalities
@@ -112,7 +156,8 @@ public class LanceOfDestiny extends JFrame  {
                     int snum = Integer.parseInt(simpleField.getText());
                     int rnum = Integer.parseInt(reinforcedField.getText());
                     int exnum = Integer.parseInt(explosiveField.getText());
-                    editorPanel.getEditingArea().createEditingArea(snum, rnum, exnum);
+                    int rwnum = Integer.parseInt(rewardingField.getText());
+                    editorPanel.getEditingArea().createEditingArea(snum, rnum, exnum, rwnum);
                 } catch (NumberFormatException ex) {
                     ex.printStackTrace();
                 }
@@ -121,7 +166,7 @@ public class LanceOfDestiny extends JFrame  {
 
 
         pack();
-        setVisible(true);
+        setVisible(false);
     }
 
 
@@ -139,7 +184,7 @@ public class LanceOfDestiny extends JFrame  {
         DefaultListModel<String> l = new DefaultListModel<>();
 
         for(Integer layout_id : layout_manager.getLayouts()){
-            String layout_name = "Layout: "+layout_id;
+            String layout_name = layout_manager.getLayoutName(layout_id);
             l.addElement(layout_name);
         }
 
@@ -158,15 +203,21 @@ public class LanceOfDestiny extends JFrame  {
             public void actionPerformed(ActionEvent e) {
 
                 if(list.getSelectedIndex() != -1){
+
                     layoutFrame.dispose();  //close layout screen
                     int index = list.getSelectedIndex();
-                    Layout layout = layout_manager.LoadLayout(layout_manager.getLayouts().get(index));
-                    switchToRunningMode(layout);
-                }
+                    Grid grid = layout_manager.LoadLayout(layout_manager.getLayouts().get(index));
 
+                    if(mainApp.getGameMode() == 0) {
+                        switchToRunningMode(grid);
+                    }
+
+                    else if(mainApp.getGameMode() == 1) {
+                        mainApp.launchMulti(grid);
+                    }
+                }
             }
         });
-
 
         JButton chooseLayout = new JButton("EDIT");
         chooseLayout.setBounds(150, 300, 70, 25);
@@ -179,8 +230,8 @@ public class LanceOfDestiny extends JFrame  {
                 if(list.getSelectedIndex() != -1){
                     layoutFrame.dispose();  //close layout screen
                     int index = list.getSelectedIndex();
-                    Layout layout = layout_manager.LoadLayout(layout_manager.getLayouts().get(index));
-                    editorPanel.getEditingArea().LoadLayout(layout);
+                    Grid grid = layout_manager.LoadLayout(layout_manager.getLayouts().get(index));
+                    editorPanel.getEditingArea().LoadLayout(grid);
                 }
 
             }
@@ -194,11 +245,11 @@ public class LanceOfDestiny extends JFrame  {
 
 
 
-    public void switchToRunningMode(Layout layout) {
-        mainApp.switchToRunningMode(layout); // Call the mode switch method from MainApplication
+    public void switchToRunningMode(Grid grid) {
+        mainApp.switchToRunningMode(grid); // Call the mode switch method from MainApplication
     }
 
-    
+
     public EditorPanel getEditingPlane() {  
         return editorPanel;
     }
