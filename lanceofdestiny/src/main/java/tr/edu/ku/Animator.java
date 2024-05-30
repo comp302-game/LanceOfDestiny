@@ -1,4 +1,4 @@
-package tr.edu.ku.Render;
+package tr.edu.ku.GameEngine.Render;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -6,8 +6,16 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import tr.edu.ku.Constants;
-import tr.edu.ku.SpellController;
-import tr.edu.ku.Domain.*;
+import tr.edu.ku.Domain.Barrier;
+import tr.edu.ku.Domain.Bullet;
+import tr.edu.ku.Domain.ExplosiveBarrier;
+import tr.edu.ku.Domain.FireBall;
+import tr.edu.ku.Domain.HollowBarrier;
+import tr.edu.ku.Domain.MagicalStaff;
+import tr.edu.ku.Domain.ReinforcedBarrier;
+import tr.edu.ku.Domain.RewardingBarrier;
+import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.Domain.Spell.SpellController;
 
 public class Animator {
 
@@ -28,9 +36,15 @@ public class Animator {
         int ypos = (int) (staff.getY()-staff.getHeight()/2);
         g2d.drawImage(Constants.staff_image, xpos, ypos, staff.getWidth(), staff.getHeight(), null);
 
-        if (SpellController.is_HEX_Active()) {
+        if (SpellController.getInstance().is_HEX_Active()) {
             int ypos2 = (int) (staff.getY()-staff.getHeight()/2 - 40);
-            g2d.drawImage(Constants.canon, xpos, ypos2, 160, 60, null);        
+
+            if(SpellController.getInstance().is_MSE_Active()) {
+                g2d.drawImage(Constants.canonbig, xpos, ypos2, 320, 120, null);  
+            }
+            else {
+                g2d.drawImage(Constants.canon, xpos, ypos2, 160, 60, null);
+            }
         }
 
         g2d.setTransform(originalTransform);
@@ -42,13 +56,13 @@ public class Animator {
         g2d.drawImage(Constants.fireball_image, (int) fireBall.getX(), (int) fireBall.getY(), fireBall.getSize(), fireBall.getSize(), null);
     }
 
-    public void renderSimpleBarrier(Graphics2D g2d, SimpleBarrier barrier) {
+    private void renderSimpleBarrier(Graphics2D g2d, SimpleBarrier barrier) {
         if (barrier.isVisible()) {
             g2d.drawImage(Constants.simple_image, (int) barrier.getX(), (int) barrier.getY(), barrier.getWidth(), barrier.getHeight(), null);
         }
     }
 
-    public void renderReinforcedBarrier(Graphics2D g2d, ReinforcedBarrier barrier) {
+    private void renderReinforcedBarrier(Graphics2D g2d, ReinforcedBarrier barrier) {
         if (barrier.isVisible()) {
             g2d.drawImage(Constants.firm_image, (int) barrier.getX(), (int) barrier.getY(), barrier.getWidth(), barrier.getHeight(), null);
             g2d.setColor(Color.WHITE);
@@ -57,21 +71,28 @@ public class Animator {
         }
     }
 
-    public void renderExplosiveBarrier(Graphics2D g2d, ExplosiveBarrier barrier) {
+    private void renderExplosiveBarrier(Graphics2D g2d, ExplosiveBarrier barrier) {
         if (barrier.isVisible()) {
             g2d.drawImage(Constants.explosive_image, (int) barrier.getX(), (int) barrier.getY(), barrier.getWidth(), barrier.getHeight(), null);
         }
     }
+
+
+    private void renderHollowBarrier(Graphics2D g2d, HollowBarrier barrier) {
+        if (barrier.isVisible()) {
+            g2d.drawImage(Constants.purple, (int) barrier.getX(), (int) barrier.getY(), barrier.getWidth(), barrier.getHeight(), null);
+        }
+    }
     
 
-    public void renderRewardingBarrier(Graphics2D g2d, RewardingBarrier barrier) {
+    private void renderRewardingBarrier(Graphics2D g2d, RewardingBarrier barrier) {
         if (barrier.isVisible()) {
             g2d.drawImage(Constants.rewarding_image, (int) barrier.getX(), (int) barrier.getY(), barrier.getWidth(), barrier.getHeight(), null);
         }
     }
 
 
-    public void renderExplosiveFalling(Graphics2D g2d, ExplosiveBarrier barrier) {
+    private void renderExplosiveFalling(Graphics2D g2d, ExplosiveBarrier barrier) {
         if (barrier.isVisible()) {
             g2d.drawImage(Constants.falling_image, (int) barrier.getX(), (int) barrier.getY(), 9, 9, null);
             g2d.drawImage(Constants.falling_image, (int) (barrier.getX() + 10), (int) (barrier.getY()+6), 9, 9, null);
@@ -80,10 +101,18 @@ public class Animator {
     }
 
 
-    public void renderRewardingFalling(Graphics2D g2d, RewardingBarrier barrier) {
+    private void renderRewardingFalling(Graphics2D g2d, RewardingBarrier barrier) {
         if (barrier.isVisible()) {
             g2d.drawImage(Constants.reward, (int) barrier.getX()+8, (int) barrier.getY()+2, 30, 30, null);
-        }     
+        }
+             
+    }
+
+    private void renderFrozenBarrier(Graphics2D g2d, Barrier barrier) {
+        if (barrier.isVisible()) {
+            g2d.drawImage(Constants.frozen, (int) barrier.getX(), (int) barrier.getY(), barrier.getWidth(), barrier.getHeight(), null);
+        }
+             
     }
 
 
@@ -93,4 +122,48 @@ public class Animator {
 
 
 
+    public void renderBarrier(Graphics2D g2d, Barrier barrier) {
+
+        if(barrier.isFrozen()){
+            renderFrozenBarrier(g2d, barrier);
+        }
+
+        else {
+        if (barrier instanceof SimpleBarrier) {
+            renderSimpleBarrier(g2d, (SimpleBarrier)barrier);
+        }
+
+        else if (barrier instanceof ReinforcedBarrier) {
+            renderReinforcedBarrier(g2d, (ReinforcedBarrier)barrier);
+        }
+
+        else if (barrier instanceof ExplosiveBarrier) {
+            if (barrier.isVisible()){
+                if(((ExplosiveBarrier)barrier).isExploded() == false) {
+                    renderExplosiveBarrier(g2d, (ExplosiveBarrier) barrier);
+                }
+
+                else {
+                    renderExplosiveFalling(g2d, (ExplosiveBarrier) barrier);
+                }
+            } 
+        }
+
+        else if (barrier instanceof RewardingBarrier) {
+            if (barrier.isVisible()){
+                if(((RewardingBarrier)barrier).isBroken() == false) {
+                    renderRewardingBarrier(g2d, (RewardingBarrier) barrier);
+                }
+
+                else {
+                    renderRewardingFalling(g2d, (RewardingBarrier) barrier);
+                }
+            } 
+        }
+
+        else if (barrier instanceof HollowBarrier) {
+            renderHollowBarrier(g2d, (HollowBarrier)barrier);
+        }
+        }
+    }
 }

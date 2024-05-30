@@ -1,14 +1,11 @@
-package tr.edu.ku.Render;
+package tr.edu.ku.GameEngine.Render;
 
 import java.awt.Graphics2D;
 
 import tr.edu.ku.Constants;
-import tr.edu.ku.SpellController;
+import tr.edu.ku.Domain.Barrier;
 import tr.edu.ku.Domain.Bullet;
-import tr.edu.ku.Domain.ExplosiveBarrier;
-import tr.edu.ku.Domain.ReinforcedBarrier;
-import tr.edu.ku.Domain.RewardingBarrier;
-import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.Domain.Spell.SpellController;
 import tr.edu.ku.GameArea.EditingArea;
 import tr.edu.ku.GameArea.GameArea;
 
@@ -21,52 +18,28 @@ public class Renderer {
     }
 
 
-    public void renderRunning(Graphics2D g, GameArea gamePanel) {
+    public void renderRunning(Graphics2D g, GameArea gameArea) {
 
-        animator.renderFireBall(g, gamePanel.getBall());
-        animator.renderMagicalStaff(g, gamePanel.getPaddle());
+        synchronized (gameArea.getLock()) {
+            animator.renderFireBall(g, gameArea.getBall());
+            animator.renderMagicalStaff(g, gameArea.getStaff());
+        
 
-        // Draw simple barriers
-        for (SimpleBarrier sbarrier : gamePanel.getSimpleBarriers()) {
-            if (sbarrier.isVisible()) {
-                animator.renderSimpleBarrier(g, sbarrier);
+            for(Barrier barrier : gameArea.getAllBarriers()) {
+                animator.renderBarrier(g, barrier);
             }
         }
-
-        // Draw reinforced barriers
-        for (ReinforcedBarrier rbarrier : gamePanel.getReinforcedBarriers()) {
-            if (rbarrier.isVisible()) {
-                animator.renderReinforcedBarrier(g, rbarrier);
-            }
-        }
-
-        // Draw explosive barriers
-        for (ExplosiveBarrier ebarrier : gamePanel.getExplosiveBarriers()) {
-            if (ebarrier.isVisible() && ebarrier.isExploded() == false) {
-                animator.renderExplosiveBarrier(g, ebarrier);
-            }
-
-            else if (ebarrier.isExploded()) {
-                animator.renderExplosiveFalling(g, ebarrier);
-            }
-        }
-
-
-        // Draw reinforced barriers
-        for (RewardingBarrier wbarrier : gamePanel.getRewardingBarriers()) {
-            if (wbarrier.isVisible() && wbarrier.isBroken() == false) {
-                animator.renderRewardingBarrier(g, wbarrier);
-            }
-
-            else if (wbarrier.isBroken()) {
-                animator.renderRewardingFalling(g, wbarrier);
-            }
-        }
-
-
-        if(SpellController.is_HEX_Active()) {
-            for (Bullet bullet : SpellController.getCurrentHEX().getBullets()) {
-                animator.renderBullets(g, bullet);
+        
+        
+        if(SpellController.getInstance().is_HEX_Active()) {
+            synchronized (SpellController.getInstance().getCurrentHEX().getLock()) {
+                if(SpellController.getInstance().getCurrentHEX().getBullets() != null) {
+                    for (Bullet bullet : SpellController.getInstance().getCurrentHEX().getBullets()) {
+                        if(bullet != null){
+                            animator.renderBullets(g, bullet);
+                        }
+                    }
+                }
             }
         }
     }
@@ -81,45 +54,18 @@ public class Renderer {
     public void renderEditing(Graphics2D g, EditingArea editingArea) {
         
         //PAINT THE LABELS THAT USER CAN CHOOSE FROM
-        SimpleBarrier newSBarrier = new SimpleBarrier(1605, 20, 32, 20); 
-        g.drawImage(Constants.simple_image, (int) newSBarrier.getX(), (int) newSBarrier.getY(), newSBarrier.getWidth(), newSBarrier.getHeight(), null);
-
-        ReinforcedBarrier newRBarrier = new ReinforcedBarrier(1605, 70, 32, 20); 
-        g.drawImage(Constants.firm_image, (int) newRBarrier.getX(), (int) newRBarrier.getY(), newRBarrier.getWidth(), newRBarrier.getHeight(), null);
-
-        ExplosiveBarrier newEBarrier = new ExplosiveBarrier(1605, 120, 32, 20); 
-        g.drawImage(Constants.explosive_image, (int) newEBarrier.getX(), (int) newEBarrier.getY(), newEBarrier.getWidth(), newEBarrier.getHeight(), null);
-
-        RewardingBarrier newWBarrier = new RewardingBarrier(1605, 170, 32, 20); 
-        g.drawImage(Constants.rewarding_image, (int) newWBarrier.getX(), (int) newWBarrier.getY(), newWBarrier.getWidth(), newWBarrier.getHeight(), null);
-
+        g.drawImage(Constants.simple_image, 1605, 20, Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT, null);
+        g.drawImage(Constants.firm_image, 1605, 70, Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT, null);
+        g.drawImage(Constants.explosive_image, 1605, 120, Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT, null);
+        g.drawImage(Constants.rewarding_image, 1605, 170, Constants.BARRIER_WIDTH, Constants.BARRIER_HEIGHT, null);
 
         
         // Draw simple barriers from editor
-        for (SimpleBarrier sbarrier : editingArea.getSimpleBarriers()) {
-            if (sbarrier.isVisible()) {
-                animator.renderSimpleBarrier(g, sbarrier);
-            }
-        }
-
-        // Draw reinforced barriers from editor
-        for (ReinforcedBarrier rbarrier : editingArea.getReinforcedBarriers()) {
-            if (rbarrier.isVisible()) {
-                animator.renderReinforcedBarrier(g, rbarrier);
-            }
-        }
-
-        // Draw explosive barriers from editor
-        for (ExplosiveBarrier eBarrier : editingArea.getExplosiveBarriers()) {
-            if (eBarrier.isVisible()) {
-                animator.renderExplosiveBarrier(g, eBarrier);
-            }
-        }
-
-        // Draw explosive barriers from editor
-        for (RewardingBarrier wBarrier : editingArea.getRewardingBarriers()) {
-            if (wBarrier.isVisible()) {
-                animator.renderRewardingBarrier(g, wBarrier);
+        for (int i = 0; i < Constants.ROW_NUMBER; i++) {
+            for (int j = 0; j < Constants.COLUMN_NUMBER; j++) {
+                if(editingArea.getGrid().getCells()[i][j].hasBarrier()){
+                    animator.renderBarrier(g, editingArea.getGrid().getCells()[i][j].getBarrier());
+                }
             }
         }
 

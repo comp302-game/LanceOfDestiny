@@ -64,7 +64,7 @@ public class KeyboardInputHandler  {
 	}
 
     public static void setXPressed(boolean b) {
-		X_Pressed = false;
+		X_Pressed = b;
 	}
 
     public static boolean getO_Pressed() {
