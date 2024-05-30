@@ -1,4 +1,4 @@
-package tr.edu.ku.LoginView;
+package tr.edu.ku.View.LoginView;
 
 import javax.swing.*;
 
@@ -9,8 +9,8 @@ import java.awt.event.*;
 
 public class LogRegPanel extends JPanel {
     
-    static final int WIDTH = 800; //extend the panel for labels
-    static final int HEIGHT = 600;
+    static final int WIDTH = 400; //extend the panel for labels
+    static final int HEIGHT = 200;
     
     private JButton login_Button;
     private JButton register_Button;
@@ -45,14 +45,8 @@ public class LogRegPanel extends JPanel {
 
  		    @Override
  		    public void actionPerformed(ActionEvent e) {
-				removeAll();
-				setLayout(new BorderLayout());
-					
-				add(loginFrame.getLoginPanel());
-				revalidate();
- 					
+				loginFrame.switchLogin();
  			}
- 			
  		});
          
         
@@ -60,13 +54,8 @@ public class LogRegPanel extends JPanel {
 
   		    @Override
   			public void actionPerformed(ActionEvent e) {
-  				removeAll();
-  				setLayout(new BorderLayout());
-  					
-  				add(loginFrame.getRegisterPanel());
-  				revalidate();
+                loginFrame.switchRegister();
   			}
-  			
   		});
     
     }
@@ -75,7 +64,7 @@ public class LogRegPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         // Draw the background image at the top-left corner of the panel
-        g.drawImage(Constants.background, 0, 0, 1600, 900, null);
+        g.drawImage(Constants.background, 0, 0, 800, 600, null);
     }
     
 }

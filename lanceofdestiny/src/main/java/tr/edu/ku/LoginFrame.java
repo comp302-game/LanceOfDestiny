@@ -1,7 +1,8 @@
-package tr.edu.ku.LoginView;
+package tr.edu.ku.View.LoginView;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+
+import javax.swing.JFrame;
 
 public class LoginFrame extends JFrame {
 
@@ -27,18 +28,25 @@ public class LoginFrame extends JFrame {
     }
 
 
-    public LogRegPanel getLogRegPanel() {
-        return logRegPanel;
-    }
-
-    
-    public LoginPanel getLoginPanel() {
-        return log;
-    }
-
-    public RegisterPanel getRegisterPanel() {
-        return reg;
+    public void switchLogin() {
+        getContentPane().removeAll();
+        log.resetLogin();
+        getContentPane().add(log, BorderLayout.CENTER);
+        pack();
     }
 
 
+    public void switchRegister() {
+        getContentPane().removeAll();
+        reg.resetLogin();
+        getContentPane().add(reg, BorderLayout.CENTER);
+        pack();
+    }
+
+
+    public void switchMain() {
+        getContentPane().removeAll();
+        getContentPane().add(logRegPanel, BorderLayout.CENTER);
+        pack();
+    }
 }

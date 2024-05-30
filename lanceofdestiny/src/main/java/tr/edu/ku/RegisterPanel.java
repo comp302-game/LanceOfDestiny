@@ -1,4 +1,4 @@
-package tr.edu.ku.LoginView;
+package tr.edu.ku.View.LoginView;
 
 import javax.swing.*;
 
@@ -10,9 +10,14 @@ import java.awt.event.*;
 
 public class RegisterPanel extends JPanel {
     
-    static final int WIDTH = 600; //extend the panel for labels
-    static final int HEIGHT = 800;
+    static final int WIDTH = 500; //extend the panel for labels
+    static final int HEIGHT = 500;
+
   	private LoginRegisterHandler logregHandler = new LoginRegisterHandler();
+	private JTextField name_input;
+	private JTextField u_name_input;
+	private JTextField password_input;
+	private JTextField email_input;
 
 
     public RegisterPanel(LoginFrame loginFrame) {
@@ -24,7 +29,7 @@ public class RegisterPanel extends JPanel {
  	
  		gridm.gridx = 0;
  		gridm.gridy = 0;
-        gridm.insets = new Insets(5, 5, 5, 5);
+        gridm.insets = new Insets(6,6,6,6);
  		
  		// Name
  		JLabel name = new JLabel("Name:");
@@ -32,7 +37,7 @@ public class RegisterPanel extends JPanel {
  		name.setForeground(Color.white);
  		add(name, gridm);
  		
- 		JTextField name_input = new JTextField(20);
+ 		name_input = new JTextField(20);
  		gridm.gridy ++;
  		add(name_input, gridm);
  		
@@ -42,7 +47,7 @@ public class RegisterPanel extends JPanel {
  		u_name.setForeground(Color.white);
  		add(u_name, gridm);
  		
- 		JTextField u_name_input = new JTextField(20);
+ 		u_name_input = new JTextField(20);
  		gridm.gridy ++;
  		add(u_name_input, gridm);
  		
@@ -52,7 +57,7 @@ public class RegisterPanel extends JPanel {
  		password.setForeground(Color.white);
  		add(password, gridm);
  		
- 		JTextField password_input = new JTextField(20);
+ 		password_input = new JTextField(20);
  		gridm.gridy ++;
  		add(password_input, gridm);
  		
@@ -62,20 +67,28 @@ public class RegisterPanel extends JPanel {
  		email.setForeground(Color.white);
  		add(email, gridm);
  		
- 		JTextField email_input = new JTextField(20);
+ 		email_input = new JTextField(20);
  		gridm.gridy ++;
  		add(email_input, gridm);
          
  		gridm.gridy ++;
  		
  		JButton register = new JButton("Register");
- 		
  		register.setPreferredSize(new Dimension(150, 30));
         register.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 25));
+
+		JButton backButton = new JButton("Return");
+		backButton.setPreferredSize(new Dimension(150, 30));
+        backButton.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 25));
         
         
         add(register, gridm);
+		gridm.gridy ++;
+
+		add(backButton, gridm);
  		
+
+
         register.addActionListener(new ActionListener() {
 
   			@Override
@@ -85,16 +98,10 @@ public class RegisterPanel extends JPanel {
 				
   				if(val == 1) {
 					JOptionPane.showMessageDialog(loginFrame, "Registration is succesful!");
-					loginFrame.getLogRegPanel().removeAll();
-					loginFrame.getLogRegPanel().add(loginFrame.getLoginPanel());
-					loginFrame.getLogRegPanel().revalidate();
-					loginFrame.revalidate();
+					loginFrame.switchMain();
   				}
   				else if (val == -1) {
   					JOptionPane.showMessageDialog(loginFrame, "This username is taken.");
-  				}
-  				else {
-  					JOptionPane.showMessageDialog(loginFrame, "The password is not valid.");	
   				}
   				
   				name_input.setText("");
@@ -104,6 +111,15 @@ public class RegisterPanel extends JPanel {
   			}
   			
   		});
+
+
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				loginFrame.switchMain();
+		  	}
+	  	});
+
     }
     
     
@@ -111,6 +127,16 @@ public class RegisterPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         // Draw the background image at the top-left corner of the panel
-        g.drawImage(Constants.background, 0, 0, 1600, 900, null);
+        g.drawImage(Constants.background, 0, 0, 800, 600, null);
     }
+
+
+	public void resetLogin() {
+		u_name_input.setText("");
+  		password_input.setText("");
+		name_input.setText("");
+		email_input.setText("");
+	}
+
+	
 }

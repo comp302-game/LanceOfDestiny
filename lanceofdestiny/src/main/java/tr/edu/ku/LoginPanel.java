@@ -1,32 +1,45 @@
-package tr.edu.ku.LoginView;
+package tr.edu.ku.View.LoginView;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 import tr.edu.ku.Constants;
 import tr.edu.ku.Database.LoginRegisterHandler;
-import tr.edu.ku.Main.MainApplication;
 import tr.edu.ku.Main.Player;
-
-import java.awt.*;
-import java.awt.event.*;
+import tr.edu.ku.View.MenuView.StarterMenuView;
 
 public class LoginPanel extends JPanel {
     
     
     private	LoginRegisterHandler logregHandler = new LoginRegisterHandler();
-    static final int WIDTH = 600;
-    static final int HEIGHT = 800;
+    static final int WIDTH = 500;
+    static final int HEIGHT = 500;
+	private JTextField u_name_input;
+	private JPasswordField password_input;
 
-   
+
     public LoginPanel(LoginFrame loginFrame) {
     	setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setLayout(new GridBagLayout()); 
         GridBagConstraints gridm = new GridBagConstraints();
  		
- 	
  		gridm.gridx = 0;
  		gridm.gridy = 0;
-        gridm.insets = new Insets(5, 5, 5, 5);
+		gridm.insets = new Insets(6,6,6,6);
         
         //Username
  		JLabel u_name = new JLabel("Username:");
@@ -34,7 +47,7 @@ public class LoginPanel extends JPanel {
  		u_name.setForeground(Color.white);
  		add(u_name, gridm);
  		
- 		JTextField u_name_input = new JTextField(20);
+ 		u_name_input = new JTextField(20);
  		gridm.gridy ++;
  		add(u_name_input, gridm);
  		
@@ -45,20 +58,27 @@ public class LoginPanel extends JPanel {
  		add(password, gridm);
  		
  		// Use JPasswordField for password input
-        JPasswordField password_input = new JPasswordField(20);
+        password_input = new JPasswordField(20);
         gridm.gridy++;
         add(password_input, gridm);
  		
  		gridm.gridy ++;
  		
  		JButton login = new JButton("Log In");
- 		
  		login.setPreferredSize(new Dimension(150, 30));
  		login.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 25));
+
+		 
+		JButton backButton = new JButton("Return");
+		backButton.setPreferredSize(new Dimension(150, 30));
+		backButton.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 25));
         
 
         add(login, gridm);
+		gridm.gridy ++;
+		add(backButton, gridm);
  		
+
         login.addActionListener(new ActionListener() {
 
   			@SuppressWarnings("deprecation")
@@ -73,9 +93,10 @@ public class LoginPanel extends JPanel {
   				    int id = logregHandler.getPlayerID(u_name_input.getText(), password_input.getText());
   					loginFrame.dispose();
                     Player player = new Player(id, u_name_input.getText());
-                    new MainApplication(player);
-                      
+
+                    new StarterMenuView(player);  
   				}
+
   				else if (val == 0) {
   					JOptionPane.showMessageDialog(loginFrame, "The username is not correct.");
   				}
@@ -83,20 +104,34 @@ public class LoginPanel extends JPanel {
   					JOptionPane.showMessageDialog(loginFrame, "The password is not correct.");	
   				}
   				
-  				
   				u_name_input.setText("");
-  				password_input.setText("");
-  						
+  				password_input.setText("");					
   			}
-  			
   		});
+
+
+		backButton.addActionListener(new ActionListener() {
+		  	@Override
+			public void actionPerformed(ActionEvent e) {
+				loginFrame.switchMain();	
+			}
+		});
+
     }
     
+
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         // Draw the background image at the top-left corner of the panel
-        g.drawImage(Constants.background, 0, 0, 1600, 900, null);
-    }   
+        g.drawImage(Constants.background, 0, 0, 800, 600, null);
+    }
+	
+	
+	public void resetLogin() {
+		u_name_input.setText("");
+  		password_input.setText("");
+	}
 	
 }
