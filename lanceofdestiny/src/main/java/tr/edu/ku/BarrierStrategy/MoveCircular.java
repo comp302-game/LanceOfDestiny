@@ -6,7 +6,6 @@ import tr.edu.ku.Constants;
 import tr.edu.ku.Domain.Barrier;
 
 public class MoveCircular implements Serializable, DynamicBehavior{
-    
 
     private double speed = Constants.BARRIER_CIRCULAR_SPEED;
     private int radius = Constants.BARRIER_CIRCULAR_RADIUS;
@@ -28,6 +27,14 @@ public class MoveCircular implements Serializable, DynamicBehavior{
 		barrier.setX(barrierOriginX-16); 
 		barrier.setY(barrierOriginY-10);
 
+        checkWallCollision(barrier);
+    }
+
+
+    private void checkWallCollision(Barrier barrier) {
+        if(barrier.getX() < 0 || barrier.getX() > 1568 || barrier.getY() < 0 || barrier.getY() > 880) {
+            setSpeed(getSpeed()*-1);
+        }
     }
 
 

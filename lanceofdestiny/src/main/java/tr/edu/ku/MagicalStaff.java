@@ -1,4 +1,4 @@
-package tr.edu.ku;
+package tr.edu.ku.Domain;
 
 import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 
 import tr.edu.ku.Constants;
+
 
 public class MagicalStaff implements Serializable{
 
@@ -57,6 +58,12 @@ public class MagicalStaff implements Serializable{
         rotationAngle = 0;
         center_x = Constants.GAMEPANEL_WIDTH / 2;
         center_y = Constants.GAMEPANEL_HEIGHT- 40;
+    }
+
+
+    public void resetSize() {
+        WIDTH = Constants.STAFF_WIDTH; 
+        HEIGHT = Constants.STAFF_HEIGHT;
     }
 
 

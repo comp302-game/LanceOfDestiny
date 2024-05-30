@@ -1,8 +1,8 @@
-package tr.edu.ku;
+package tr.edu.ku.Domain;
 
 import java.awt.Rectangle;
 
-import tr.edu.ku.BarrierStrategy.MoveVertical;
+import tr.edu.ku.Domain.BarrierStrategy.MoveVertical;
 
 public class RewardingBarrier extends Barrier {
 
@@ -12,6 +12,7 @@ public class RewardingBarrier extends Barrier {
         super(x, y, width, height, r, c);
         this.setIsDynamic(false);
     }
+
     public void Break() {
         this.setDynamicBehavior(new MoveVertical());
         isBroken = true;

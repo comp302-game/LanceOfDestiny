@@ -4,22 +4,23 @@ import java.util.Random;
 
 import tr.edu.ku.GameArea.GameArea;
 
-public class SpellFactory {
-
+public class MultiplayerSpellFac {
+    
+    
     //singleton & factory pattern for creating spells
-    private static SpellFactory instance;
+    private static MultiplayerSpellFac instance;
 
     private int progression = 0;
 	private SpellAdapter new_Spell;
     private Random random = new Random();
 
-    private SpellFactory() {}
+    private MultiplayerSpellFac() {}
 
 
     //singleton pattern (only one instance)
-    public static SpellFactory getInstance() {
+    public static MultiplayerSpellFac getInstance() {
 		if (instance == null) {
-			instance = new SpellFactory();
+			instance = new MultiplayerSpellFac();
 		}
 		return instance;
 	}
@@ -45,26 +46,50 @@ public class SpellFactory {
 				i = 4;
 				progression++;
 			}
+			else if (progression == 4) {
+				i = 5;
+				progression++;
+			}
+			else if (progression == 5) {
+				i = 6;
+				progression++;
+			}
+			else if (progression == 6) {
+				i = 7;
+				progression++;
+			}
 
             else {
                 // Generate a random number between 0 and 1
                 double randomNumber = random.nextDouble();
 
  	            // Create a new spell with %25 probability each
-                if (randomNumber <= 0.25) {
+                if (randomNumber <= 0.143) {
 		            i = 1;
     	        }
 
-                else if (0.25 < randomNumber && randomNumber <= 0.50) {
+                else if (0.143 < randomNumber && randomNumber <= 0.286) {
 		            i = 2;
     	        }
 
-                else if (0.50 < randomNumber && randomNumber <= 0.75) {
+                else if (0.286 < randomNumber && randomNumber <= 0.429) {
 		            i = 3;
     	        }
 
-                else if (0.75 < randomNumber && randomNumber <= 1) {
+                else if (0.429 < randomNumber && randomNumber <= 0.572) {
 		            i = 4;
+    	        }
+
+				else if (0.572 < randomNumber && randomNumber <= 0.715) {
+		            i = 5;
+    	        }
+
+				else if (0.175 < randomNumber && randomNumber <= 0.858) {
+		            i = 6;
+    	        }
+
+				else if (0.858 < randomNumber && randomNumber <= 1) {
+		            i = 7;
     	        }
             }
 

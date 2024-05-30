@@ -4,5 +4,4 @@ public interface SpellAdapter {
     
     public void activate(int time);
     public void deactivate();
-    
 }

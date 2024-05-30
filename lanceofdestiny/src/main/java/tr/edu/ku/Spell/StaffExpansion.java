@@ -22,8 +22,11 @@ public class StaffExpansion implements SpellAdapter {
         SpellController.getInstance().setMSE(true);
         SpellController.getInstance().setCurrentMSE(this);
 
-        gameArea.getStaff().setWidth(Constants.STAFF_ENLARGED_WIDTH);
-        gameArea.getStaff().setHeight(Constants.STAFF_ENLARGED_HEIGHT);
+        synchronized(gameArea.getLock()) {
+            gameArea.getStaff().setWidth(Constants.STAFF_ENLARGED_WIDTH);
+            gameArea.getStaff().setHeight(Constants.STAFF_ENLARGED_HEIGHT);
+        }
+        
         spellStartingTime = System.currentTimeMillis(); // Record the game starting time
 
         // Start timer for duration of spell
@@ -35,6 +38,7 @@ public class StaffExpansion implements SpellAdapter {
             }
         }, time * 1000);
     }
+    
     @Override
     public void deactivate() {
         synchronized(gameArea.getLock()){

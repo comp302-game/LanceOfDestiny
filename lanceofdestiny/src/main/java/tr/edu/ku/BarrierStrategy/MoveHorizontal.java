@@ -19,7 +19,17 @@ public class MoveHorizontal implements DynamicBehavior, Serializable {
         if(dx >= 40 || dx <= -40) {
 			setSpeed(speed*-1);
 		}
+
+		checkWallCollision(barrier);
     }
+
+
+	private void checkWallCollision(Barrier barrier) {
+        if(barrier.getX() < 0 || barrier.getX() > 1568) {
+            setSpeed(speed*-1);
+        }
+    }
+
 
 
 	public double getSpeed() {
