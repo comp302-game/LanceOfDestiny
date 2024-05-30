@@ -13,6 +13,7 @@ public class DoubleAccel implements SpellAdapter {
     private long spellStartingTime;
     private long spellPausedTime;
     private double delta_t;
+    private Timer timer;
 
     public DoubleAccel(GameArea gameArea) {
         this.gameArea = gameArea;
@@ -22,13 +23,16 @@ public class DoubleAccel implements SpellAdapter {
     public void activate(int time) {
         SpellController.getInstance().setACCEL(true);
         SpellController.getInstance().setCurrentACCEL(this);
+
+        synchronized(gameArea.getLock()) {
+            gameArea.getBall().setSpeedX(gameArea.getBall().getSpeedX()/2);
+            gameArea.getBall().setSpeedY(gameArea.getBall().getSpeedY()/2);
+        }
         
         spellStartingTime = System.currentTimeMillis(); // Record the game starting time
-        gameArea.getBall().setSpeedX(gameArea.getBall().getSpeedX()/2);
-        gameArea.getBall().setSpeedY(gameArea.getBall().getSpeedY()/2);
 
         // Start timer for duration of spell
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -46,7 +50,8 @@ public class DoubleAccel implements SpellAdapter {
             gameArea.getBall().setSpeedX(gameArea.getBall().getSpeedX()*2);
             gameArea.getBall().setSpeedY(gameArea.getBall().getSpeedY()*2);
         }
-    }   
+    }
+        timer.cancel();   
     }
 
 
@@ -61,5 +66,4 @@ public class DoubleAccel implements SpellAdapter {
         activate((int) (30-delta_t));
         spellStartingTime = System.currentTimeMillis(); // Record the game starting time
     }
-    
 }
