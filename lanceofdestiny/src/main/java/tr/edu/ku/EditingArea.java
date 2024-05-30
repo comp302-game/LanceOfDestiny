@@ -6,8 +6,12 @@ import java.util.Collections;
 import java.util.Random;
 
 import tr.edu.ku.Constants;
-import tr.edu.ku.MathBase;
 import tr.edu.ku.Domain.Barrier;
+import tr.edu.ku.Domain.ExplosiveBarrier;
+import tr.edu.ku.Domain.ReinforcedBarrier;
+import tr.edu.ku.Domain.RewardingBarrier;
+import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.GameEngine.MathBase;
 
 
 public class EditingArea {
@@ -33,17 +37,13 @@ public class EditingArea {
     //Check correct barrier placement 
     public void checkValidPlacement(Barrier selectedBarrier) throws Exception {
 
-        double x_pos = selectedBarrier.getX();
-        double y_pos = selectedBarrier.getY();
+        double x_pos = selectedBarrier.getCenterX();
+        double y_pos = selectedBarrier.getCenterY();
 
-        Point p = MathBase.getGrid(x_pos, y_pos);        
-
-        for (int i = 0; i < Constants.ROW_NUMBER; i++) {
-            for (int j = 0; j < Constants.COLUMN_NUMBER; j++) {
-                if(grid.getCells()[(int) p.getX()][(int) p.getY()].hasBarrier()){
-                    throw new Exception("Barrier is on the same grid with another barrier");
-                }
-            }
+        Point p = MathBase.getGridPos(x_pos, y_pos);
+            
+        if(grid.getCells()[(int) p.getX()][(int) p.getY()].hasBarrier()){
+            throw new Exception("Barrier is on the same grid with another barrier");
         }
     }
 
@@ -52,19 +52,19 @@ public class EditingArea {
     //Check threshold for barrier numbers.
     public void checkCorrectNum() throws Exception{
         
-        if (simple_number < 1) {
+        if (simple_number < 75) {
             throw new Exception("At least 75 Simple Barriers need to be added to layout.");
         }
 
-        if (reinforced_number < 1) {
+        if (reinforced_number < 10) {
             throw new Exception("At least 10 Reinforced Barriers need to be added to layout.");
         }
 
-        if (explosive_number < 1) {
+        if (explosive_number < 5) {
             throw new Exception("At least 5 Explosive Barriers need to be added to layout.");
         }
 
-        if (rewarding_number < 1) {
+        if (rewarding_number < 5) {
             throw new Exception("At least 5 Rewarding Barriers need to be added to layout.");
         }
     }
@@ -72,7 +72,25 @@ public class EditingArea {
 
 
     public void LoadLayout(Grid grid) { //Method to copy every barrier into gamearea barrier lists.
+        reset();
         setGrid(grid);
+
+        for (int i = 0; i < Constants.ROW_NUMBER; i++) {
+            for (int j = 0; j < Constants.COLUMN_NUMBER; j++) {
+                if(grid.getCells()[i][j].getBarrier() instanceof SimpleBarrier) {
+                    simple_number++;
+                }
+                else if(grid.getCells()[i][j].getBarrier() instanceof ReinforcedBarrier) {
+                    reinforced_number++;
+                }
+                else if(grid.getCells()[i][j].getBarrier() instanceof ExplosiveBarrier) {
+                    explosive_number++;
+                }
+                else if(grid.getCells()[i][j].getBarrier() instanceof RewardingBarrier) {
+                    rewarding_number++;
+                }
+            }
+        }
     }
 
 

@@ -1,4 +1,4 @@
-package tr.edu.ku.GameView;
+package tr.edu.ku.View.GameView;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -15,18 +15,17 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Renderer;
 
 import tr.edu.ku.Constants;
-import tr.edu.ku.MathBase;
 import tr.edu.ku.Database.SaveLoadLayout;
 import tr.edu.ku.Domain.Barrier;
 import tr.edu.ku.Domain.ExplosiveBarrier;
 import tr.edu.ku.Domain.ReinforcedBarrier;
 import tr.edu.ku.Domain.RewardingBarrier;
 import tr.edu.ku.Domain.SimpleBarrier;
-import tr.edu.ku.GameArea.EditingArea;
 import tr.edu.ku.GameArea.GridCell;
-import tr.edu.ku.Render.Renderer;
+import tr.edu.ku.GameEngine.MathBase;
 
 
 public class EditorPanel extends JPanel implements MouseMotionListener, MouseListener {
@@ -118,11 +117,12 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
     public void saveLayout(SaveLoadLayout layout_manager) {
         try {
             editingArea.checkCorrectNum();
-            layout_manager.SaveLayout(editingArea);
+            String name = JOptionPane.showInputDialog(null, "Enter layout name:", "Save Name", JOptionPane.QUESTION_MESSAGE);
+            layout_manager.SaveLayout(editingArea, name);
             JOptionPane.showMessageDialog(this, "Layout saved to player's layout saves.");
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Invalid action: "+e.getMessage());
+            JOptionPane.showMessageDialog(this, e.getMessage());
         } 
     }
 
@@ -152,7 +152,6 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
             selectedBarrier = newSBarrier;
             initialClick = e.getPoint();
             isDragging = true;
-    
         }
 
         else if (reinforcedLabel.contains(e.getPoint()))  {
@@ -160,7 +159,6 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
             selectedBarrier = newRBarrier;
             initialClick = e.getPoint();
             isDragging = true;
-      
         }
 
         else if (explosiveLabel.contains(e.getPoint()))  {
@@ -168,7 +166,6 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
             selectedBarrier = newEBarrier;
             initialClick = e.getPoint();
             isDragging = true;
-      
         }
 
         else if (rewardingLabel.contains(e.getPoint()))  {
@@ -207,7 +204,7 @@ public class EditorPanel extends JPanel implements MouseMotionListener, MouseLis
 
         if (selectedBarrier != null){
             isDragging = false;
-            Point p = MathBase.getGrid(selectedBarrier); //Grid position of selected barrier
+            Point p = MathBase.getGridPos(selectedBarrier); //Grid position of selected barrier
     
             if(boundary.contains(selectedBarrier.getBounds()) && isEditing == false) {
 
