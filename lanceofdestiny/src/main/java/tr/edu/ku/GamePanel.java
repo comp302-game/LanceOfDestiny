@@ -1,4 +1,4 @@
-package tr.edu.ku.GameView;
+package tr.edu.ku.View.GameView;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,43 +8,39 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import tr.edu.ku.Constants;
 import tr.edu.ku.Database.SaveLoadGame;
-import tr.edu.ku.GameArea.Layout;
+import tr.edu.ku.Domain.Spell.SpellController;
+import tr.edu.ku.GameArea.GameArea;
+import tr.edu.ku.GameArea.Grid;
 import tr.edu.ku.GameEngine.KeyboardInputHandler;
-import tr.edu.ku.Render.Renderer;
-import tr.edu.ku.SpellController;
+import tr.edu.ku.GameEngine.Render.Renderer;
+
 
 public class GamePanel extends JPanel implements KeyListener {
     
     private GameArea gameArea;
     private Renderer renderer = new Renderer();
     private KeyboardInputHandler inputHandler = new KeyboardInputHandler();
-    
-    private int gameState = 1; //1 for resume, -1 for pause. Start at resume state.
+    private int game_mode;
 
     
-    public GamePanel(Layout layout) {
+    public GamePanel(Grid grid, int game_mode) {
         setPreferredSize(new Dimension(Constants.GAMEPANEL_WIDTH, Constants.GAMEPANEL_HEIGHT));
         setFocusable(true);    
         addKeyListener(this);
 
-        gameArea = new GameArea(layout);
-
+        this.game_mode = game_mode;
+        gameArea = new GameArea(grid, game_mode);
     }
 
 
     
     public void updateGameState() {
-        if(gameState == 1 && KeyboardInputHandler.getX_Pressed() == true && gameArea.isGameOver() == false && gameArea.isGameFinished() == false) { //If resuming, update the game state
-            gameArea.updateGame();
-        }
-
-        else{
-            //do nothing
-        }
+        gameArea.update();
     }
 
 
@@ -63,22 +59,7 @@ public class GamePanel extends JPanel implements KeyListener {
         for (int i = 0; i < gameArea.getLives(); i++) {
             g.drawImage(Constants.heart_icon, 10 + 25*i, 10, 19, 19, null);
         }
-
-        //Display Spells
-        g.drawImage(Constants.fireball2x, 600, 8, 25, 25, null); //OWFB SPELL
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 14)); // Font name, style, size
-        g.drawString(""+ (int) gameArea.getOFB().size(), 630, 23);
-
-        g.drawImage(Constants.player2x, 645, 8, 25, 25, null); //OWFB SPELL
-        g.drawString(""+ (int) gameArea.getMSE().size(), 675, 23);
-
-        g.drawImage(Constants.felix, 690, 8, 25, 25, null); //FELIX SPELL
-        g.drawString(""+ (int) gameArea.getFELIX().size(), 720, 23);
-
-        g.drawImage(Constants.hex, 735, 8, 25, 25, null); //HEX SPELL
-        g.drawString(""+ (int) gameArea.getHEX().size(), 765, 23);
-
+        
 
         //Render Game Elements
         renderer.renderRunning((Graphics2D) g, gameArea);
@@ -92,13 +73,12 @@ public class GamePanel extends JPanel implements KeyListener {
         }
 
         //Display Paused Message
-        if (gameState == -1) {
+        if (gameArea.getGameState() == -1) {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 48)); // Font name, style, size
             g.drawString("GAME PAUSED", 650, 450);
         }
-        
-        
+
         //Display Game Over!
         if (gameArea.isGameOver() == true) {
             g.setColor(Color.WHITE);
@@ -117,47 +97,82 @@ public class GamePanel extends JPanel implements KeyListener {
 
     //Save layout to players layout list
     public void saveGame(SaveLoadGame game_manager) {
-        game_manager.SaveGame(gameArea);
+        try{
+            gameArea.setGameState();
+            String name = JOptionPane.showInputDialog(null, "Enter layout name:", "Save Name", JOptionPane.QUESTION_MESSAGE);
+            game_manager.SaveGame(gameArea, name);
+            JOptionPane.showMessageDialog(this, "Game saved.");
+            gameArea.setGameState();
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Something went wrong. Couldn't save the game.");
+        }
     }
+
 
 
     @Override
     public void keyPressed(KeyEvent e) {
         inputHandler.keyPressed(e);
-
         int key = e.getKeyCode();
         
         if (key == KeyEvent.VK_O) {
             
-            if(!gameArea.getOFB().isEmpty() && SpellController.is_OVM_Active() == false) {
-                gameArea.getOFB().get(0).activate(gameArea.getBall());
-                gameArea.getOFB().remove(0);
+            if(gameArea.getOFB() > 0 && SpellController.getInstance().is_OFB_Active() == false) {
+                gameArea.spellUsed("OFB");
             }
             
 
         } else if (key == KeyEvent.VK_F) {
 
-            if(!gameArea.getFELIX().isEmpty() && gameArea.getLives() < 3) {
-                gameArea.getFELIX().get(0).activate(gameArea);
-                gameArea.getFELIX().remove(0);
+            if(gameArea.getFELIX() > 0 && gameArea.getLives() < 3) {
+                gameArea.spellUsed("FELIX");
             }
             
         } else if (key == KeyEvent.VK_M) {
 
-            if(!gameArea.getMSE().isEmpty() && SpellController.is_MSE_Active() == false) {
-                gameArea.getMSE().get(0).activate(gameArea.getPaddle());
-                gameArea.getMSE().remove(0);
+            if(gameArea.getMSE() > 0 && SpellController.getInstance().is_MSE_Active() == false) {
+                gameArea.spellUsed("MSE");
             }
             
         } else if (key == KeyEvent.VK_H) {
 
-            if(!gameArea.getHEX().isEmpty() && SpellController.is_HEX_Active() == false) {
-                gameArea.getHEX().get(0).activate(gameArea.getPaddle());
-                gameArea.getHEX().remove(0);
-            }
-            
+            if(gameArea.getHEX() > 0 && SpellController.getInstance().is_HEX_Active() == false) {
+                gameArea.spellUsed("HEX");
+            } 
+
         }
+        
+
+        //FOR MULTIPLAYER PART
+        if(game_mode == 1 || game_mode == 2) {
+
+            if (key == KeyEvent.VK_1) {
+
+                if(gameArea.getACCEL() > 0) {
+                    gameArea.attackOpponent("ACCEL");
+                } 
+
+            } else if (key == KeyEvent.VK_2) {
+
+                if(gameArea.getVOID() > 0) {
+                    gameArea.attackOpponent("VOID");
+                } 
+
+            } else if (key == KeyEvent.VK_3) {
+
+                if(gameArea.getHOLLOW() > 0) {
+                    gameArea.attackOpponent("HOLLOW");
+                } 
+            }
+        } 
     }
+
+
+
+    
+
+
+
 
     @Override
     public void keyReleased(KeyEvent e) {
@@ -168,20 +183,12 @@ public class GamePanel extends JPanel implements KeyListener {
     public void keyTyped(KeyEvent e) {
     }
 
-    public int getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(int newState) {
-        gameState = newState;
-    }
-
     public GameArea getGameArea() {
         return gameArea;
     }
 
-    public void setGameArea(Layout layout) { //
-        gameArea = new GameArea(layout);
+    public void setGameArea(Grid grid) {
+        gameArea = new GameArea(grid, game_mode);
     }
 
 }
