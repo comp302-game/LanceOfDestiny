@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Random;
 
 import tr.edu.ku.Constants;
+import tr.edu.ku.Domain.Barrier;
 import tr.edu.ku.Domain.Spell.SpellAdapter;
 import tr.edu.ku.GameArea.GameArea;
 import tr.edu.ku.GameArea.GridCell;
@@ -23,6 +24,7 @@ public class HollowPurple implements SpellAdapter {
 
         ArrayList<GridCell> grids = new ArrayList<>();
 
+        synchronized(gameArea.getLock()) {
         for (int i = 0; i < Constants.ROW_NUMBER; i++) {
             for (int j = 0; j < Constants.COLUMN_NUMBER; j++) {
                 grids.add(gameArea.getGrid().getCells()[i][j]);
@@ -32,18 +34,29 @@ public class HollowPurple implements SpellAdapter {
         Collections.shuffle(grids, random);
 
         int number = 0;
-
         for(int i = 0; i < grids.size(); i++){
             if(!grids.get(i).hasBarrier()){
-                grids.get(i).setBarrier(4);
-                gameArea.getAllBarriers().add(grids.get(i).getBarrier());
-                number++;
+
+                boolean valid_placement = true;
+
+                for(Barrier barrier: gameArea.getMovingBarriers()) {
+                    if(grids.get(i).getBarrierBounds().intersects(barrier.getBounds())){
+                        valid_placement = false;
+                    }
+                }
+                
+                if(valid_placement) {
+                    grids.get(i).setBarrier(4);
+                    gameArea.getAllBarriers().add(grids.get(i).getBarrier());
+                    number++;
+                }
             }
 
             if(number>=8) {
                 break;
             }
         }
+    }
     }
     
 
