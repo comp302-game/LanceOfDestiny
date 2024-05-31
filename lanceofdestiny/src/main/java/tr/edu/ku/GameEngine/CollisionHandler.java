@@ -5,7 +5,6 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import tr.edu.ku.MathBase;
 import tr.edu.ku.Domain.Barrier;
 import tr.edu.ku.Domain.Bullet;
 import tr.edu.ku.Domain.ExplosiveBarrier;
@@ -27,7 +26,7 @@ public class CollisionHandler {
     private ArrayList<Barrier> movingBarriers;
 
     private MovementHandler movement = new MovementHandler(this);
-    private ReinforcedBarrier incident_rbarrier; //For safe collision with reinforced barrier
+    private Barrier incident_barrier; //For safe collision with reinforced barrier
 
     public CollisionHandler(FireBall fireball, MagicalStaff staff, Grid grid, ArrayList<Barrier> allBarriers, ArrayList<Barrier> movingBarriers){
         this.allBarriers = allBarriers;
@@ -50,7 +49,7 @@ public class CollisionHandler {
             paddle.setCollideable(false);
         }
 
-        Point p = MathBase.getGrid(ball); //Current Grid of the ball.
+        Point p = MathBase.getGridPos(ball); //Current Grid of the ball.
         int x = (int) p.getX();
         int y = (int) p.getY();
         
@@ -81,7 +80,7 @@ public class CollisionHandler {
 
                             //For safe collision check
                             barrier.setCollideable(false);
-                            incident_rbarrier = (ReinforcedBarrier)barrier;
+                            incident_barrier = barrier;
 
                             if (((ReinforcedBarrier)barrier).getHitsTaken() >= ((ReinforcedBarrier)barrier).getMaxHits()) {
                                 grid.getCells()[x][y].deleteBarrier();   //delete barrier from grid
@@ -166,7 +165,7 @@ public class CollisionHandler {
 
                         //For safe collision check
                         barrier.setCollideable(false);
-                        incident_rbarrier = (ReinforcedBarrier)barrier;
+                        incident_barrier = barrier;
 
                         if (((ReinforcedBarrier)barrier).getHitsTaken() >= ((ReinforcedBarrier)barrier).getMaxHits()) {
                             BarrierIterator.remove();
@@ -199,6 +198,7 @@ public class CollisionHandler {
 
             else if (barrier.isVisible() && barrier != null && ball.intersects(barrier.getBounds()) && barrier.getCollideable() && barrier.isFrozen()) {  
                 movement.reflect(barrier, ball);
+                incident_barrier = barrier;
             }
         }
     return inc_score;
@@ -214,7 +214,7 @@ public class CollisionHandler {
         while (barrierIterator.hasNext()) {
             Barrier barrier = barrierIterator.next();
 
-            synchronized (SpellController.getInstance().getLock()) {
+            synchronized (SpellController.getInstance().getCurrentHEX().getLock()) {
             if(SpellController.getInstance().is_HEX_Active()) {
                 
                 Iterator<Bullet> bulletIterator = SpellController.getInstance().getCurrentHEX().getBullets().iterator();
@@ -238,7 +238,7 @@ public class CollisionHandler {
                         }
 
                         //bullet collision with reinforced barrier
-                        if(barrier instanceof ReinforcedBarrier) {
+                        else if(barrier instanceof ReinforcedBarrier) {
                             ReinforcedBarrier rBarrier = (ReinforcedBarrier)barrier;
 
                             rBarrier.hit();
@@ -260,7 +260,7 @@ public class CollisionHandler {
                         }
 
                         //bullet collision with explosive barrier
-                        if(barrier instanceof ExplosiveBarrier) {
+                        else if(barrier instanceof ExplosiveBarrier) {
                             ExplosiveBarrier eBarrier = (ExplosiveBarrier) barrier;
 
                             if(!eBarrier.isExploded()) {
@@ -277,7 +277,7 @@ public class CollisionHandler {
                         }
 
                         //bullet collision with rewarding barrier
-                        if(barrier instanceof RewardingBarrier) {
+                        else if(barrier instanceof RewardingBarrier) {
                             RewardingBarrier wBarrier = (RewardingBarrier) barrier;
 
                             if(!wBarrier.isBroken()) {
@@ -290,10 +290,10 @@ public class CollisionHandler {
                         }
 
                         //bullet collision with purple barrier
-                        if(barrier instanceof HollowBarrier) {
+                        else if(barrier instanceof HollowBarrier) {
                             barrierIterator.remove();           //remove from all barriers
                             grid.deleteFromGrid(barrier);       //remove from the grid
-                            bulletIterator.remove();    //remove bullet
+                            bulletIterator.remove();            //remove bullet
                             inc_score = true;
                         }
                     }
@@ -363,9 +363,9 @@ public class CollisionHandler {
 
     
     private void ResolveIncident() {
-        if(incident_rbarrier != null && ball.intersects(incident_rbarrier.getBounds()) == false){
-            incident_rbarrier.setCollideable(true);
-            incident_rbarrier = null;
+        if(incident_barrier != null && ball.intersects(incident_barrier.getBounds()) == false){
+            incident_barrier.setCollideable(true);
+            incident_barrier = null;
         }
     }
 
@@ -400,6 +400,7 @@ public class CollisionHandler {
                 }
 
                 else {
+                    System.out.println("here is entered");
                     movement.reflect(barrier, cbarrier);
                 }
             }
