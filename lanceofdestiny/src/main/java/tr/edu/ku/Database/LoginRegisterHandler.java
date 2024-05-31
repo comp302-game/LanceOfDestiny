@@ -5,31 +5,43 @@ import java.sql.ResultSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
+
+
 public class LoginRegisterHandler {
-     public int Register(String name, String username, String password, String email){
+
+
+    public int Register(String name, String username, String password, String email){
         String query = "INSERT INTO players (username, password, name, email) VALUES (?, ?, ?, ?)";
         if(!isPlayerExist(username)){
-        	if(ValidatePassword(password) && ValidateEmail(email) && ValidateName(name)) {
-            try{
-                PreparedStatement preparedStatement = DatabaseConnection.connection.prepareStatement(query);
-                preparedStatement.setString(1, username);
-                preparedStatement.setString(2, password);
-                preparedStatement.setString(3, name);
-                preparedStatement.setString(4, email);
-                preparedStatement.executeUpdate();
-                return 1;
+        	try {
+                ValidateName(name);
+                ValidatePassword(password);
+                ValidateEmail(email);
+
+                try{
+                    PreparedStatement preparedStatement = DatabaseConnection.connection.prepareStatement(query);
+                    preparedStatement.setString(1, username);
+                    preparedStatement.setString(2, password);
+                    preparedStatement.setString(3, name);
+                    preparedStatement.setString(4, email);
+                    preparedStatement.executeUpdate();
+                    return 1;
+                }
+                catch (Exception e ){
+                    e.printStackTrace();
+                }
+        	}catch (Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage());
             }
-            catch (Exception e ){
-                e.printStackTrace();
-            }
-        	}
-        	else {
-        		return 0;
-        	}
+            return 0;
         }
-       
-        return -1;
+        else {
+            return -1;
+        }
     }
+
 
 
     public int Login(String username, String password){
@@ -104,31 +116,37 @@ public class LoginRegisterHandler {
 
 
     
-    public boolean ValidatePassword(String password){
+    public void ValidatePassword(String password) throws Exception{
         // rules: Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
         
     	String regex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(password);
-        return matcher.matches();
+        if(!matcher.matches()) {
+            throw new Exception("Password is invalid! Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character.");
+        }
     }
 
 
-    public boolean ValidateEmail(String email){
+    public void ValidateEmail(String email) throws Exception{
 
         // basic email validator for @gmail, etc something
         String regex = "^[A-Za-z0-9+_.-]+@(.+)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
+        if(!matcher.matches()) {
+            throw new Exception("Email is invalid!");
+        }
     }
 
 
-    public boolean ValidateName(String Name){
+    public void ValidateName(String Name) throws Exception{
         String regex = "^[a-zA-Z][a-zA-Z ',.-]{0,99}$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(Name);
-        return matcher.matches();
+        if(!matcher.matches()) {
+            throw new Exception("Name is invalid!");
+        }
     }
-    
+
 }

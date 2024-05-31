@@ -1,10 +1,11 @@
-package tr.edu.ku;
+package tr.edu.ku.Domain;
 
 import java.util.Random;
 
-import tr.edu.ku.BarrierStrategy.MoveHorizontal;
+import tr.edu.ku.Domain.BarrierStrategy.MoveHorizontal;
 
 public class ReinforcedBarrier extends Barrier {
+
     private int hitsTaken;
     private int MAX_HITS = 3;
 
@@ -14,7 +15,7 @@ public class ReinforcedBarrier extends Barrier {
 
         // Create a Random object
         Random random = new Random();
-        // Generate a random number between 0 and 3 (inclusive)
+        // Generate a random number between 3 and 6 (inclusive)
         MAX_HITS = random.nextInt(4) + 3;
 
 

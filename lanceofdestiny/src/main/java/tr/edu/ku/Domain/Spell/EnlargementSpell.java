@@ -23,7 +23,11 @@ public class EnlargementSpell implements SpellAdapter {
     public void activate(int time) {
         SpellController.getInstance().setOFB(true);
         SpellController.getInstance().setCurrentOFB(this);
-        gameArea.getBall().setSize(Constants.FIREBALL_SIZE_ENLARGED);
+
+        synchronized(gameArea.getLock()) {
+            gameArea.getBall().setSize(Constants.FIREBALL_SIZE_ENLARGED);
+        }
+        
         spellStartingTime = System.currentTimeMillis(); // Record the game starting time
 
         // Start timer for duration of spell

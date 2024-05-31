@@ -1,4 +1,4 @@
-package tr.edu.ku;
+package tr.edu.ku.Database;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,6 +9,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+
+import tr.edu.ku.GameArea.EditingArea;
+import tr.edu.ku.GameArea.Grid;
+import tr.edu.ku.Main.Player;
 
 public class SaveLoadLayout {
 
@@ -41,22 +45,45 @@ public class SaveLoadLayout {
         return LayoutIDs;
     }
 
+
+    public String getLayoutName(int layout_id) {
+
+        String name = "";
+
+        try{
+            String query = "SELECT save_name FROM Saved_Layouts WHERE layout_id = ?";
+            PreparedStatement pStatement = connection.prepareStatement(query);
+            pStatement.setInt(1, layout_id);
+            ResultSet resultset = pStatement.executeQuery();
+            // Iterate over the result set and add game IDs to the ArrayList
+                if (resultset.next()) {
+                    name = resultset.getString("save_name");;
+                }
+        }
+        catch(Exception ex) {
+            System.out.println("could not get saved layout name: " + ex.getMessage());
+        }
+
+        return name;
+    }
+
     
 
-    public void SaveLayout(EditingArea editingArea){
+    public void SaveLayout(EditingArea editingArea, String save_name){
         try{
-            String query = "INSERT INTO Saved_Layouts (player_id, layout_data) VALUES (?, ?)";
+            String query = "INSERT INTO Saved_Layouts (player_id, save_name, layout_data) VALUES (?, ?, ?)";
             PreparedStatement pStatement = connection.prepareStatement(query);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
-            Layout layout = new Layout(editingArea.getSimpleBarriers(), editingArea.getReinforcedBarriers(), editingArea.getExplosiveBarriers());
+            Grid saved_grid = editingArea.getGrid();
 
-            oos.writeObject(layout);
+            oos.writeObject(saved_grid);
             oos.close();
             byte[] serializedObject = baos.toByteArray();
             ByteArrayInputStream bais = new ByteArrayInputStream(serializedObject);
             pStatement.setInt(1, player.getPlayerId());
-            pStatement.setBinaryStream(2, bais, serializedObject.length);
+            pStatement.setString(2, save_name);
+            pStatement.setBinaryStream(3, bais, serializedObject.length);
             pStatement.executeUpdate();
         }
         catch(Exception ex) {
@@ -66,12 +93,12 @@ public class SaveLoadLayout {
 
 
 
-    public Layout LoadLayout(Integer index){
+    public Grid LoadLayout(Integer index){
 
-        Layout loadedLayout = null;
+        Grid loadedGrid = null;
 
         try{
-            String query = "SELECT layout_data FROM saved_layouts WHERE player_id = ? AND layout_id = ?";
+            String query = "SELECT layout_data FROM Saved_Layouts WHERE player_id = ? AND layout_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, player.getPlayerId());
             preparedStatement.setInt(2, index);
@@ -79,7 +106,7 @@ public class SaveLoadLayout {
             if(resultset.next()){
                 InputStream binaryStream = resultset.getBinaryStream("layout_data");
                 ObjectInputStream ois = new ObjectInputStream(binaryStream);
-                loadedLayout = (Layout) ois.readObject();
+                loadedGrid = (Grid) ois.readObject();
                 ois.close();
             }
         }
@@ -87,8 +114,6 @@ public class SaveLoadLayout {
             System.out.println("could not load layout: " + ex.getMessage());
         }
 
-        return loadedLayout;
+        return loadedGrid;
     }
-    
-    
 }

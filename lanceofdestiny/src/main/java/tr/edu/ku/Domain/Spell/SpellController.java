@@ -7,7 +7,6 @@ public class SpellController {
 
     //singleton pattern for spell control mechanism
     private static SpellController instance;
-    private final Object spellLock = new Object(); // Lock object for synchronization
 
     //NORMAL SPELLS
     private boolean HEX_Active;
@@ -49,12 +48,6 @@ public class SpellController {
 
 
 //GETTER SETTER
-
-    public Object getLock() {
-        return spellLock;
-    }
-
-
     public boolean is_HEX_Active() {
         return HEX_Active;
     }

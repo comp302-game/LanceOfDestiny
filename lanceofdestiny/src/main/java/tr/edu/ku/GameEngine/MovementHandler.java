@@ -5,7 +5,6 @@ import java.util.Iterator;
 
 import tr.edu.ku.Constants;
 import tr.edu.ku.Domain.Barrier;
-import tr.edu.ku.Domain.BarrierStrategy.MoveCircular;
 import tr.edu.ku.Domain.Bullet;
 import tr.edu.ku.Domain.ExplosiveBarrier;
 import tr.edu.ku.Domain.FireBall;
@@ -13,6 +12,7 @@ import tr.edu.ku.Domain.MagicalStaff;
 import tr.edu.ku.Domain.ReinforcedBarrier;
 import tr.edu.ku.Domain.RewardingBarrier;
 import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.Domain.BarrierStrategy.MoveCircular;
 import tr.edu.ku.Domain.Spell.SpellController;
 import tr.edu.ku.GameArea.Grid;
 
@@ -44,13 +44,13 @@ public class MovementHandler {
 
 			
         	// Determine collision side based on ball's movement direction
-        	if (slope > 0.72) {
+        	if (slope > 0.74) {
         	    // Collision from top and bottom
         	    ball.setSpeedY(ball.getSpeedY() * -1); // Reverse vertical direction
 				
         	} 
         
-        	else if (slope < 0.72) {
+        	else if (slope < 0.74) {
         	    // Collision from the sides
         	    ball.setSpeedX(ball.getSpeedX() * -1); // Reverse horizontal direction
         	} 
@@ -83,12 +83,12 @@ public class MovementHandler {
     			double slope = dy/dx;
     	
         		// Determine collision side based on ball's movement direction
-        		if (slope > 0.72) {
+        		if (slope > 0.74) {
         			// Collision from top and bottom
         			ball.setSpeedY(ball.getSpeedY() * -1); // Reverse vertical direction
         		} 
         
-        		else if (slope < 0.72) {
+        		else if (slope < 0.74) {
         			// Collision from the sides
        				ball.setSpeedX(ball.getSpeedX() * -1); // Reverse horizontal direction
         		}	 
@@ -273,11 +273,20 @@ public class MovementHandler {
 	
 		if (ball.getX() <= 0 || ball.getX() >= Constants.GAMEPANEL_WIDTH - ball.getSize()) {
 			ball.setSpeedX(ball.getSpeedX()* -1);
+			if (ball.getX() < 0){
+				ball.setX(-ball.getX());
+			}
+
+			if (ball.getX() > Constants.GAMEPANEL_WIDTH - ball.getSize()){
+				ball.setX(Constants.GAMEPANEL_WIDTH - ball.getSize() - (ball.getX() - (Constants.GAMEPANEL_WIDTH - ball.getSize())));
+			}
 
 		}
 		if (ball.getY() <= 0) {
 			ball.setSpeedY(ball.getSpeedY()* -1);
-
+			if (ball.getY() < 0){
+				ball.setY(-ball.getY());
+			}
 		}
 	}
 
@@ -314,15 +323,15 @@ public class MovementHandler {
 
 	public void updateBullets() {
 
+		synchronized (SpellController.getInstance().getCurrentHEX().getLock()) {
 		if(SpellController.getInstance().getCurrentHEX().getBullets() != null && SpellController.getInstance().is_HEX_Active()) {
-			synchronized (SpellController.getInstance().getLock()) {
 			Iterator<Bullet> bulletIterator = SpellController.getInstance().getCurrentHEX().getBullets().iterator();
             	while (bulletIterator.hasNext()) {
                 	Bullet bullet = bulletIterator.next();
                 	bullet.setX(bullet.getX() + bullet.getSpeedX());
 					bullet.setY(bullet.getY() + bullet.getSpeedY());
 				
-					if((bullet.getX()> 1600 || bullet.getX()< 0 || bullet.getY()> 900 || bullet.getX()< 0)) {
+					if((bullet.getX()> 1620 || bullet.getY()< 0 || bullet.getY()> 950 || bullet.getX()< -5)) {
 						bulletIterator.remove();
 					}
             	}

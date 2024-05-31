@@ -1,8 +1,8 @@
 package tr.edu.ku.Domain.Spell;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import tr.edu.ku.Constants;
 import tr.edu.ku.Domain.Bullet;
@@ -10,9 +10,11 @@ import tr.edu.ku.GameArea.GameArea;
 
 public class Hex implements SpellAdapter {
 
+    private final ConcurrentLinkedQueue<Bullet> Bullets = new ConcurrentLinkedQueue<>();
+    private final Object spellLock = new Object(); // Lock object for bullet synchronization
+
     private Timer timer;
     private GameArea gameArea;
-    private ArrayList<Bullet> Bullets = new ArrayList<>();
 
     private long spellStartingTime;
     private long spellPausedTime;
@@ -55,8 +57,10 @@ public class Hex implements SpellAdapter {
             Bullet bullet2 = new Bullet(gameArea.getStaff().getX()-((gameArea.getStaff().getWidth()/2)*Math.cos(Math.toRadians(gameArea.getStaff().getRotationAngle()))), gameArea.getStaff().getY()+((gameArea.getStaff().getWidth()/2)*Math.sin(Math.toRadians(gameArea.getStaff().getRotationAngle()))), speedX, speedY);
             
             if(gameArea.getGameState() == 1) {
-                Bullets.add(bullet);
-                Bullets.add(bullet2);
+                synchronized(spellLock) {
+                    Bullets.add(bullet);
+                    Bullets.add(bullet2);
+                }
             }
         }
     }
@@ -87,7 +91,12 @@ public class Hex implements SpellAdapter {
 
 
 
-    public ArrayList<Bullet> getBullets() {
+    public ConcurrentLinkedQueue<Bullet> getBullets() {
         return Bullets;
+    }
+
+    
+    public Object getLock() {
+        return spellLock;
     }
 }

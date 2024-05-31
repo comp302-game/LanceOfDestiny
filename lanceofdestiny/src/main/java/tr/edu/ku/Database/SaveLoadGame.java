@@ -10,8 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-import tr.edu.ku.GameArea.GameArea;
 import tr.edu.ku.GameArea.Game;
+import tr.edu.ku.GameArea.GameArea;
 import tr.edu.ku.Main.Player;
 
 public class SaveLoadGame {
@@ -28,7 +28,7 @@ public class SaveLoadGame {
         ArrayList<Integer> gameIDs = new ArrayList<>();
 
         try{
-            String query = "SELECT game_id FROM saved_games WHERE player_id = ?";
+            String query = "SELECT game_id FROM Saved_Games WHERE player_id = ?";
             PreparedStatement pStatement = connection.prepareStatement(query);
             pStatement.setInt(1, player.getPlayerId());
             ResultSet resultset = pStatement.executeQuery();
@@ -47,21 +47,45 @@ public class SaveLoadGame {
 
 
 
+    public String getGameName(int game_id) {
 
-    public void SaveGame(GameArea gameArea){
+        String name = "";
+
         try{
-            String query = "INSERT INTO saved_games (player_id, game_data) VALUES (?, ?)";
+            String query = "SELECT save_name FROM Saved_Games WHERE game_id = ?";
+            PreparedStatement pStatement = connection.prepareStatement(query);
+            pStatement.setInt(1, game_id);
+            ResultSet resultset = pStatement.executeQuery();
+            // Iterate over the result set and add game IDs to the ArrayList
+                if (resultset.next()) {
+                    name = resultset.getString("save_name");;
+                }
+        }
+        catch(Exception ex) {
+            System.out.println("could not get saved game name: " + ex.getMessage());
+        }
+
+        return name;
+    }
+
+
+
+
+    public void SaveGame(GameArea gameArea, String save_name){
+        try{
+            String query = "INSERT INTO Saved_Games (player_id, save_name, game_data) VALUES (?, ?, ?)";
             PreparedStatement pStatement = connection.prepareStatement(query);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
-            Game sglh = new Game(gameArea.getSimpleBarriers(), gameArea.getReinforcedBarriers(), gameArea.getExplosiveBarriers(), gameArea.getPaddle(), gameArea.getBall(), gameArea.getScore(), gameArea.isGameOver(), gameArea.getLives());
+            Game sglh = new Game(gameArea.getGrid(),gameArea.getAllBarriers(), gameArea.getMovingBarriers(), gameArea.getStaff(), gameArea.getBall(), gameArea.getScore(), gameArea.isGameOver(), gameArea.getLives(), gameArea.getHEX(), gameArea.getOFB(), gameArea.getMSE(), gameArea.getFELIX(), gameArea.getYmir());
     
             oos.writeObject(sglh);
             oos.close();
             byte[] serializedObject = baos.toByteArray();
             ByteArrayInputStream bais = new ByteArrayInputStream(serializedObject);
             pStatement.setInt(1, player.getPlayerId());
-            pStatement.setBinaryStream(2, bais, serializedObject.length);
+            pStatement.setString(2, save_name);
+            pStatement.setBinaryStream(3, bais, serializedObject.length);
             pStatement.executeUpdate();
         }
         catch(Exception ex) {

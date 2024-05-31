@@ -1,7 +1,7 @@
 package tr.edu.ku;
 
 import tr.edu.ku.Database.DatabaseConnection;
-import tr.edu.ku.LoginView.LoginFrame;
+import tr.edu.ku.View.LoginView.LoginFrame;
 
 public class Launcher {
 

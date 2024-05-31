@@ -1,193 +1,185 @@
 package tr.edu.ku.GameArea;
 
-import java.awt.geom.Point2D;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import tr.edu.ku.Domain.*;
+import tr.edu.ku.Constants;
+import tr.edu.ku.Domain.Barrier;
+import tr.edu.ku.Domain.ExplosiveBarrier;
+import tr.edu.ku.Domain.ReinforcedBarrier;
+import tr.edu.ku.Domain.RewardingBarrier;
+import tr.edu.ku.Domain.SimpleBarrier;
+import tr.edu.ku.GameEngine.MathBase;
 
 
 public class EditingArea {
+    
+    private Grid grid;
+    private int simple_number = 0;
+    private int reinforced_number = 0;
+    private int explosive_number = 0;
+    private int rewarding_number = 0;
 
-    private ArrayList<SimpleBarrier> simpleBarriers;
-	private ArrayList<ReinforcedBarrier> reinforcedBarriers;
-    private ArrayList<ExplosiveBarrier> explosiveBarriers;
-    private ArrayList<RewardingBarrier> rewardingBarriers;
-
+    
     private static final Random random = new Random();
 
     public EditingArea() {
-        simpleBarriers = new ArrayList<>();
-        reinforcedBarriers = new ArrayList<>();
-        explosiveBarriers = new ArrayList<>();
-        rewardingBarriers = new ArrayList<>();
-        
+        grid = new Grid();
     }
-
 
     public void updateEditingState() {
-
     }
+
 
 
     //Check correct barrier placement 
     public void checkValidPlacement(Barrier selectedBarrier) throws Exception {
-            for(SimpleBarrier sbarrier : simpleBarriers){
-                if(sbarrier.getBounds().intersects(selectedBarrier.getBounds()) && selectedBarrier != sbarrier){
-                    throw new Exception("Barrier is on collision with another barrier");
-                }
-            }
 
-            for(ReinforcedBarrier rbarrier : reinforcedBarriers){
-                if(rbarrier.getBounds().intersects(selectedBarrier.getBounds()) && selectedBarrier != rbarrier){
-                    throw new Exception("Barrier is on collision with another barrier");
-                }
-            }
+        double x_pos = selectedBarrier.getCenterX();
+        double y_pos = selectedBarrier.getCenterY();
 
-            for(ExplosiveBarrier eBarrier : explosiveBarriers){
-                if(eBarrier.getBounds().intersects(selectedBarrier.getBounds()) && selectedBarrier != eBarrier){
-                    throw new Exception("Barrier is on collision with another barrier");
-                }
-            }
-
-
-            for(RewardingBarrier wBarrier : rewardingBarriers){
-                if(wBarrier.getBounds().intersects(selectedBarrier.getBounds()) && selectedBarrier != wBarrier){
-                    throw new Exception("Barrier is on collision with another barrier");
-                }
-            }
+        Point p = MathBase.getGridPos(x_pos, y_pos);
+            
+        if(grid.getCells()[(int) p.getX()][(int) p.getY()].hasBarrier()){
+            throw new Exception("Barrier is on the same grid with another barrier");
+        }
     }
+
 
 
     //Check threshold for barrier numbers.
     public void checkCorrectNum() throws Exception{
-
-        if (simpleBarriers.size() < 1) {
+        
+        if (simple_number < 75) {
             throw new Exception("At least 75 Simple Barriers need to be added to layout.");
         }
 
-        if (reinforcedBarriers.size() < 1) {
+        if (reinforced_number < 10) {
             throw new Exception("At least 10 Reinforced Barriers need to be added to layout.");
         }
 
-        if (explosiveBarriers.size() < 1) {
+        if (explosive_number < 5) {
             throw new Exception("At least 5 Explosive Barriers need to be added to layout.");
         }
 
-        if (rewardingBarriers.size() < 1) {
+        if (rewarding_number < 5) {
             throw new Exception("At least 5 Rewarding Barriers need to be added to layout.");
         }
     }
 
 
-    private void reset() {
-        simpleBarriers.clear();
-        reinforcedBarriers.clear();
-        explosiveBarriers.clear();
-        rewardingBarriers.clear();
-    }
 
-
-    public void LoadLayout(Layout layout) { //Method to copy every barrier into gamearea barrier lists
-        
+    public void LoadLayout(Grid grid) { //Method to copy every barrier into gamearea barrier lists.
         reset();
+        setGrid(grid);
 
-        setSimpleBarriers(layout.getSimpleBarriers());
-		setReinforcedBarriers(layout.getReinforcedBarriers());
-		setExplosiveBarriers(layout.getExplosiveBarriers());
-        setRewardingBarriers(layout.getRewardingBarriers());
-		
+        for (int i = 0; i < Constants.ROW_NUMBER; i++) {
+            for (int j = 0; j < Constants.COLUMN_NUMBER; j++) {
+                if(grid.getCells()[i][j].getBarrier() instanceof SimpleBarrier) {
+                    simple_number++;
+                }
+                else if(grid.getCells()[i][j].getBarrier() instanceof ReinforcedBarrier) {
+                    reinforced_number++;
+                }
+                else if(grid.getCells()[i][j].getBarrier() instanceof ExplosiveBarrier) {
+                    explosive_number++;
+                }
+                else if(grid.getCells()[i][j].getBarrier() instanceof RewardingBarrier) {
+                    rewarding_number++;
+                }
+            }
+        }
     }
 
 
     public void createEditingArea(int sbar, int rbar, int ebar, int wbar) {
-        
+     
         reset();
+        ArrayList<GridCell> grids = new ArrayList<>();
 
-        int total_number = sbar + rbar + ebar + wbar;
-        int maxBarriers_perRow = 30;
-        // Define the number of rows needed
-        int totalRows = (int) Math.ceil((double) total_number / maxBarriers_perRow);
-
-        Double x = 20.0;
-        Double y = 55.0;
-        ArrayList<Point2D> points = new ArrayList<>();
-
-        for(int row = 0; row<totalRows; row++) {
-            int barriersInThisRow = Math.min(maxBarriers_perRow, total_number - row * maxBarriers_perRow);
-            
-            for(int col = 0; col<barriersInThisRow; col++) {
-                Point2D.Double point = new Point2D.Double(x + col*52, y + row*60);
-                points.add(point);
+        for (int i = 0; i < Constants.ROW_NUMBER; i++) {
+            for (int j = 0; j < Constants.COLUMN_NUMBER; j++) {
+                grids.add(grid.getCells()[i][j]);
             }
         }
 
-        Collections.shuffle(points, random);
-
+        Collections.shuffle(grids, random);
 
         for(int i=0; i< sbar; i++)  {
-            SimpleBarrier sBarrier = new SimpleBarrier((int) points.get(i).getX(), (int) points.get(i).getY(), 32, 20);
-            simpleBarriers.add(sBarrier);
+            grid.setBarrier(grids.get(i).getRowNum(), grids.get(i).getColNum(), 0);
         }
 
         for(int i=0; i<rbar; i++)  {
-            ReinforcedBarrier rBarrier = new ReinforcedBarrier((int) points.get(sbar + i).getX(), (int) points.get(sbar + i).getY(), 32, 20);
-            reinforcedBarriers.add(rBarrier);
+            grid.setBarrier(grids.get(i+sbar).getRowNum(), grids.get(i+sbar).getColNum(), 1);
         }
 
         for(int i=0; i<ebar; i++)  {
-            ExplosiveBarrier eBarrier = new ExplosiveBarrier((int) points.get(sbar + rbar + i).getX(), (int) points.get(sbar + rbar + i).getY(), 32, 20);
-            explosiveBarriers.add(eBarrier);
+            grid.setBarrier(grids.get(i+rbar+sbar).getRowNum(), grids.get(i+rbar+sbar).getColNum(), 2);
         }
 
         for(int i=0; i<wbar; i++)  {
-            RewardingBarrier wBarrier = new RewardingBarrier((int) points.get(sbar + rbar + ebar + i).getX(), (int) points.get(sbar + rbar + ebar + i).getY(), 32, 20);
-            rewardingBarriers.add(wBarrier);
+            grid.setBarrier(grids.get(i+sbar+rbar+ebar).getRowNum(), grids.get(i+sbar+rbar+ebar).getColNum(), 3);
         }
 
+        simple_number = sbar;
+        reinforced_number = rbar;
+        explosive_number = ebar;
+        rewarding_number = wbar;
     }
+
     
-    
 
     
-
-
-
-
-    //GETTER SETTERS
-    
-    public ArrayList<SimpleBarrier> getSimpleBarriers() {
-        return simpleBarriers;
+    //GETTER SETTER
+    public Grid getGrid() {
+        return grid;
     }
 
-    public ArrayList<ReinforcedBarrier> getReinforcedBarriers() {
-        return reinforcedBarriers;
-    }
-
-    public ArrayList<ExplosiveBarrier> getExplosiveBarriers() {
-        return explosiveBarriers;
-    }
-
-    public ArrayList<RewardingBarrier> getRewardingBarriers() {
-        return rewardingBarriers;
-    }
-
-	public void setSimpleBarriers(ArrayList<SimpleBarrier> sBarriers) {
-		this.simpleBarriers = sBarriers;
+    public void setGrid(Grid g) {
+		this.grid = g;
 	}
 
-	public void setReinforcedBarriers(ArrayList<ReinforcedBarrier> rBarriers) {
-		this.reinforcedBarriers = rBarriers;
-	}
+    private void reset() {
+        simple_number = 0;
+        rewarding_number = 0;
+        explosive_number = 0;
+        reinforced_number = 0;
+        grid.reset();
+    }
 
-	public void setExplosiveBarriers(ArrayList<ExplosiveBarrier> eBarriers) {
-		this.explosiveBarriers = eBarriers;
-	}
+    public int getSimpleNum() {
+        return simple_number;
+    }
 
-    public void setRewardingBarriers(ArrayList<RewardingBarrier> wBarriers) {
-		this.rewardingBarriers = wBarriers;
-	}
+    public int getReinforcedNum() {
+        return reinforced_number;
+    }
+
+    public int getExplosiveNum() {
+        return explosive_number;
+    }
+
+    public int getRewardingNum() {
+        return rewarding_number;
+    }
+
+    public void setSimpleNum(int simpleNum) {
+        this.simple_number = simpleNum;
+    }
+
+    public void setReinforcedNum(int reinforcedNum) {
+        this.reinforced_number = reinforcedNum;
+    }
+
+    public void setExplosiveNum(int explosiveNum) {
+        this.explosive_number = explosiveNum;
+    }
+
+    public void setRewardingNum(int rewardingNum) {
+        this.rewarding_number = rewardingNum;
+    }
 
     
 }

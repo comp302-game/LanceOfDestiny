@@ -1,12 +1,12 @@
-package tr.edu.ku;
+package tr.edu.ku.Domain;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Random;
 
 import tr.edu.ku.Constants;
-import tr.edu.ku.BarrierStrategy.MoveCircular;
-import tr.edu.ku.BarrierStrategy.MoveVertical;
+import tr.edu.ku.Domain.BarrierStrategy.MoveCircular;
+import tr.edu.ku.Domain.BarrierStrategy.MoveVertical;
 
 
 
@@ -24,7 +24,7 @@ public class ExplosiveBarrier extends Barrier{
     	double randomNumber = random.nextDouble();
 
  		// With %20 probability the barrier is dynamic
-    	if (randomNumber <= 0.20) {
+    	if (randomNumber <= 0.99) {
             this.setIsDynamic(true);
 			dynamicBehavior = new MoveCircular(); //pass the origin of the circular movement
     	}
@@ -42,6 +42,7 @@ public class ExplosiveBarrier extends Barrier{
         return isExploded;
     }
     
+
     public ArrayList<Rectangle> getHitboxes() {
         ArrayList<Rectangle> pieces = new ArrayList<>();
         Rectangle piece1 = new Rectangle((int) this.getX(), (int) this.getY(), 9, 9);

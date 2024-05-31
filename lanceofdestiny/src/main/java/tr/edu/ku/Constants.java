@@ -42,6 +42,7 @@ public class Constants {
     public static final int ROW_NUMBER = 12; //MAX TOTAL 300 BARRIERS
 
 
+
     public static BufferedImage simple_image;
     public static BufferedImage firm_image;
     public static BufferedImage explosive_image;
@@ -57,6 +58,7 @@ public class Constants {
     public static BufferedImage redgem;
     public static BufferedImage greengem;
     public static BufferedImage purple;
+    public static BufferedImage frozen;
 
     public static BufferedImage fireball2x;
     public static BufferedImage player2x;
@@ -64,6 +66,11 @@ public class Constants {
     public static BufferedImage felix;
 
     public static BufferedImage canon;
+    public static BufferedImage canonbig;
+
+    public static BufferedImage accel;
+    public static BufferedImage hollow;
+    public static BufferedImage voids;
 
 
     Constants() {
@@ -91,9 +98,14 @@ public class Constants {
             hex = ImageIO.read(getClass().getResourceAsStream("/Assets/hex.png"));
             felix = ImageIO.read(getClass().getResourceAsStream("/Assets/felix.png"));
             canon = ImageIO.read(getClass().getResourceAsStream("/Assets/canon.png"));
+            canonbig = ImageIO.read(getClass().getResourceAsStream("/Assets/canonbig.png"));
 
             purple = ImageIO.read(getClass().getResourceAsStream("/Assets/PurpleBarrier.png"));
-            
+            frozen = ImageIO.read(getClass().getResourceAsStream("/Assets/frozen.png"));
+
+            accel = ImageIO.read(getClass().getResourceAsStream("/Assets/accel.jpg"));
+            hollow = ImageIO.read(getClass().getResourceAsStream("/Assets/hollow.jpg"));
+            voids = ImageIO.read(getClass().getResourceAsStream("/Assets/void.jpg"));            
 
             System.out.println("Images loaded succesfuly.");
         } catch (IOException e) {
