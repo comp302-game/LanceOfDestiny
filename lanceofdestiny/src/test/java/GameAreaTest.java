@@ -10,8 +10,6 @@ import tr.edu.ku.GameArea.Grid;
 import tr.edu.ku.Domain.Barrier;
 import tr.edu.ku.Domain.MagicalStaff;
 import tr.edu.ku.Domain.FireBall;
-import tr.edu.ku.GameEngine.MovementHandler;
-import tr.edu.ku.GameEngine.CollisionHandler;
 import tr.edu.ku.Constants;
 
 public class GameAreaTest {
@@ -66,7 +64,7 @@ public class GameAreaTest {
     @Test
     public void testConstructorWithValidGrid() {
         Grid validGrid = createValidGrid();
-        GameArea gameArea = new GameArea(validGrid);
+        GameArea gameArea = new GameArea(validGrid, 0);
         assertEquals(expectedBarrierCount, gameArea.getAllBarriers().size());
     }
 
@@ -74,21 +72,21 @@ public class GameAreaTest {
     @Test
     public void testConstructorWithEmptyGrid() {
         Grid emptyGrid = createEmptyGrid();
-        GameArea gameArea = new GameArea(emptyGrid);
+        GameArea gameArea = new GameArea(emptyGrid, 0);
         assertEquals(0, gameArea.getAllBarriers().size());
     }
 
     // Black-Box Test
     @Test(expected = NullPointerException.class)
     public void testConstructorWithNullGrid() {
-        GameArea gameArea = new GameArea(null);
+        new GameArea(null, 0);
     }
 
     // Glass-Box Test
     @Test
     public void testInitializationOfBarriers() {
         Grid gridWithBarriers = createGridWithSpecificBarriers();
-        GameArea gameArea = new GameArea(gridWithBarriers);
+        GameArea gameArea = new GameArea(gridWithBarriers, 0);
         List<Barrier> expectedBarriers = getExpectedBarriers(gridWithBarriers);
         assertEquals(expectedBarriers, gameArea.getAllBarriers());
     }
@@ -97,7 +95,7 @@ public class GameAreaTest {
     @Test
     public void testInitializationOfStaffAndBall() {
         Grid validGrid = createValidGrid();
-        GameArea gameArea = new GameArea(validGrid);
+        GameArea gameArea = new GameArea(validGrid, 0);
         // verifying correct staff initialization
         MagicalStaff staff = gameArea.getStaff();
         assertNotNull(staff);

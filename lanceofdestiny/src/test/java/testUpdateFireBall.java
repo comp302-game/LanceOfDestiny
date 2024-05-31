@@ -1,20 +1,23 @@
+import static org.junit.Assert.assertEquals;
+
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals; 
-import org.junit.jupiter.api.Test;
 import javax.swing.JTextField;
+
+import org.junit.Test;
+
+import tr.edu.ku.Constants;
 import tr.edu.ku.Domain.Barrier;
 import tr.edu.ku.Domain.FireBall;
 import tr.edu.ku.Domain.MagicalStaff;
 import tr.edu.ku.Domain.SimpleBarrier;
 import tr.edu.ku.GameArea.Grid;
 import tr.edu.ku.GameEngine.CollisionHandler;
-import tr.edu.ku.GameEngine.MovementHandler;
-import tr.edu.ku.MathBase;
-import tr.edu.ku.Constants;
 import tr.edu.ku.GameEngine.KeyboardInputHandler;
-import java.awt.event.KeyEvent;
+import tr.edu.ku.GameEngine.MathBase;
+import tr.edu.ku.GameEngine.MovementHandler;
 
 public class testUpdateFireBall{
     Grid grid = new Grid();
@@ -27,7 +30,13 @@ public class testUpdateFireBall{
 
     public testUpdateFireBall(){
 
-        Point p = MathBase.getGrid(100, 100);
+        Point p = new Point();
+        try {
+            p = MathBase.getGridPos(100, 100);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         
         bar = new SimpleBarrier(100, 100, 100, 20,  (int)p.getY(), (int)p.getX());
         bar_l.add(bar);

@@ -6,7 +6,7 @@ import java.awt.Point;
 import org.junit.Test;
 
 import tr.edu.ku.Constants;
-import tr.edu.ku.MathBase;
+import tr.edu.ku.GameEngine.MathBase;
 
 public class GridPositionCalculatorTest {
 
