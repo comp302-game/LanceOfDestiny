@@ -173,7 +173,7 @@ public class RunningFrame extends JFrame implements YmirSpellObserver, SpellNumb
         DefaultListModel<String> l = new DefaultListModel<>();
 
         for(Integer game_id : game_manager.getGames()){
-            String game_name = "Game: "+game_id;
+            String game_name = game_manager.getGameName(game_id);
             l.addElement(game_name);
         }
 
